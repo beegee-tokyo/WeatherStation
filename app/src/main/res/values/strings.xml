@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">WeatherStation</string>
+
+    <string name="currTemp">Temperature</string>
+    <string name="currTempMin">Min. Temp.</string>
+    <string name="currTempMax">Max. Temp.</string>
+    <string name="currPress">Pressure</string>
+    <string name="currPressMin">Min. Press.</string>
+    <string name="currPressMax">Max. Press.</string>
+    <string name="currHumid">Humidity</string>
+    <string name="currHumidMin">Min. Hum.</string>
+    <string name="currHumidMax">Max. Hum</string>
+    <string name="currHour">Hour</string>
+    <string name="hourOfDay">of Day</string>
+    <string name="currMonth">Last 31 days</string>
+    <string name="currCont">Continuous</string>
+    <string name="tempSign" translatable="false">&#176;C</string>
+    <string name="pressSign" translatable="false">mBar</string>
+    <string name="humidSign" translatable="false">%</string>
+    <string name="waitForSensor">Query sensor</string>
+    <string name="sensorNotAvail">Not available</string>
+    <string name="noData">No records available</string>
+    <string name="errorExportTitle">Export error</string>
+    <string name="errorExport">Could not export data to CSV file. Check if your SD card is inserted and that you have sufficient space left.</string>
+    <string name="succExportTitle">Export successful</string>
+    <string name="succExport">Data exported to CSV file. The file name is %1$s.</string>
+    <string name="errorBackupTitle">Backup error</string>
+    <string name="errorBackup">Could not backup data to JSON file. Check if your SD card is inserted and that you have sufficient space left.</string>
+    <string name="succBackupTitle">Backup successful</string>
+    <string name="succBackup">Data backed up to JSON file. The file is name is %1$s.</string>
+    <string name="errorRestoreTitle">Restore error</string>
+    <string name="errorRestore">Could not restore data to database. Maybe the file was corrupted. Please try to restore from another backup file.</string>
+    <string name="succRestoreTitle">Restore successful</string>
+    <string name="succRestore">Data restored from %1$s to database.</string>
+    <string name="noRestoreFile">Could not find any backup file. You need to do backup before you can restore data.</string>
+    <string name="noFileSelected">Please select a file from which you want to restore the data.</string>
+    <string name="bRestore">Restore</string>
+    <string name="restoreFileTitle">Available backup files</string>
+    <string name="selectThemeTitle">Available themes</string>
+    <string name="themeBlue">Blue</string>
+    <string name="themeGreen">Green</string>
+    <string name="themeGray">Grey</string>
+    <string name="themeOrange">Orange</string>
+    <string name="themeRed">Red</string>
+    <string name="themeWhite">White</string>
+
+    <!-- Drawer messages -->
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="sbExport">Export records</string>
+    <string name="sbBackup">Backup records</string>
+    <string name="sbRestore">Restore records</string>
+    <string name="sbThemes">Select theme</string>
+
+    <!-- Google adMob -->
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+</resources>

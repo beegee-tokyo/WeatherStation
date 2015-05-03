@@ -1,0 +1,197 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppTheme" parent="AppTheme.Base"/>
+
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@android:color/holo_blue_light</item>
+        <item name="colorPrimaryDark">@android:color/holo_blue_dark</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@android:color/holo_blue_bright</item>
+        <item name="android:colorBackgroundCacheHint">@android:color/holo_blue_light</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:textColorSecondary">@android:color/black</item>
+        <item name="android:textColorTertiary">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/holo_blue_dark</item>
+        <item name="myBackground">@android:color/holo_blue_bright</item>
+        <item name="android:displayOptions">useLogo|showHome</item>
+        <item name="myToolBar">@style/myBlueToolBar</item>
+        <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
+        <item name="background">@android:color/holo_blue_dark</item>
+        <item name="ic_infinite_icon" >@drawable/ic_infinite</item>
+        <item name="ic_day_view_icon" >@drawable/ic_day_view</item>
+        <item name="ic_month_view_icon" >@drawable/ic_month_view</item>
+        <item name="ic_next_icon" >@drawable/ic_next</item>
+        <item name="ic_last_icon" >@drawable/ic_last</item>
+    </style>
+
+    <style name="AppTheme_Gray.Base" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/my_gray_light</item>
+        <item name="colorPrimaryDark">@color/my_gray_bright</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@color/my_gray_bright</item>
+        <item name="android:colorBackgroundCacheHint">@color/my_gray_dark</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:textColorSecondary">@android:color/black</item>
+        <item name="android:textColorTertiary">@android:color/black</item>
+        <item name="android:colorBackground">@color/my_gray_dark</item>
+        <item name="myBackground">@color/my_gray_bright</item>
+        <item name="android:displayOptions">useLogo|showHome</item>
+        <item name="myToolBar">@style/myGrayToolBar</item>
+        <item name="android:actionBarStyle">@style/MyActionBarThemeGray</item>
+        <item name="background">@android:color/darker_gray</item>
+        <item name="ic_infinite_icon" >@drawable/ic_infinite</item>
+        <item name="ic_day_view_icon" >@drawable/ic_day_view</item>
+        <item name="ic_month_view_icon" >@drawable/ic_month_view</item>
+        <item name="ic_next_icon" >@drawable/ic_next</item>
+        <item name="ic_last_icon" >@drawable/ic_last</item>
+    </style>
+
+    <style name="AppTheme_Green.Base" parent="Theme.AppCompat">
+        <item name="colorPrimary">@android:color/holo_green_light</item>
+        <item name="colorPrimaryDark">@color/my_green_bright</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@color/my_green_bright</item>
+        <item name="android:colorBackgroundCacheHint">@android:color/holo_green_dark</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:textColorSecondary">@android:color/black</item>
+        <item name="android:textColorTertiary">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/holo_green_dark</item>
+        <item name="myBackground">@color/my_green_bright</item>
+        <item name="android:displayOptions">useLogo|showHome</item>
+        <item name="myToolBar">@style/myGreenToolBar</item>
+        <item name="android:actionBarStyle">@style/MyActionBarThemeGreen</item>
+        <item name="background">@android:color/holo_green_dark</item>
+        <item name="ic_infinite_icon" >@drawable/ic_infinite</item>
+        <item name="ic_day_view_icon" >@drawable/ic_day_view</item>
+        <item name="ic_month_view_icon" >@drawable/ic_month_view</item>
+        <item name="ic_next_icon" >@drawable/ic_next</item>
+        <item name="ic_last_icon" >@drawable/ic_last</item>
+    </style>
+
+    <style name="AppTheme_Orange.Base" parent="Theme.AppCompat">
+        <item name="colorPrimary">@android:color/holo_orange_light</item>
+        <item name="colorPrimaryDark">@color/my_orange_bright</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@color/my_orange_bright</item>
+        <item name="android:colorBackgroundCacheHint">@android:color/holo_orange_dark</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:textColorSecondary">@android:color/black</item>
+        <item name="android:textColorTertiary">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/holo_orange_dark</item>
+        <item name="myBackground">@color/my_orange_bright</item>
+        <item name="android:displayOptions">useLogo|showHome</item>
+        <item name="myToolBar">@style/myOrangeToolBar</item>
+        <item name="android:actionBarStyle">@style/MyActionBarThemeOrange</item>
+        <item name="background">@android:color/holo_orange_dark</item>
+        <item name="ic_infinite_icon" >@drawable/ic_infinite</item>
+        <item name="ic_day_view_icon" >@drawable/ic_day_view</item>
+        <item name="ic_month_view_icon" >@drawable/ic_month_view</item>
+        <item name="ic_next_icon" >@drawable/ic_next</item>
+        <item name="ic_last_icon" >@drawable/ic_last</item>
+    </style>
+
+    <style name="AppTheme_Red.Base" parent="Theme.AppCompat">
+        <item name="colorPrimary">@android:color/holo_red_light</item>
+        <item name="colorPrimaryDark">@color/my_red_bright</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@color/my_red_bright</item>
+        <item name="android:colorBackgroundCacheHint">@android:color/holo_red_dark</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:textColorTertiary">@android:color/white</item>
+        <item name="android:colorBackground">@android:color/holo_red_dark</item>
+        <item name="myBackground">@color/my_red_bright</item>
+        <item name="android:displayOptions">useLogo|showHome</item>
+        <item name="myToolBar">@style/myRedToolBar</item>
+        <item name="android:actionBarStyle">@style/MyActionBarThemeRed</item>
+        <item name="background">@android:color/holo_red_dark</item>
+        <item name="ic_infinite_icon" >@drawable/ic_infinite</item>
+        <item name="ic_day_view_icon" >@drawable/ic_day_view</item>
+        <item name="ic_month_view_icon" >@drawable/ic_month_view</item>
+        <item name="ic_next_icon" >@drawable/ic_next</item>
+        <item name="ic_last_icon" >@drawable/ic_last</item>
+    </style>
+
+    <style name="AppTheme_White.Base" parent="Theme.AppCompat">
+        <item name="colorPrimary">@android:color/white</item>
+        <item name="colorPrimaryDark">@android:color/white</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:colorBackgroundCacheHint">@color/my_white_dark</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:textColorSecondary">@android:color/black</item>
+        <item name="android:textColorTertiary">@android:color/black</item>
+        <item name="android:colorBackground">@color/my_white_dark</item>
+        <item name="myBackground">@android:color/white</item>
+        <item name="android:displayOptions">useLogo|showHome</item>
+        <item name="myToolBar">@style/myWhiteToolBar</item>
+        <item name="android:actionBarStyle">@style/MyActionBarThemeWhite</item>
+        <item name="background">@color/my_white_dark</item>
+        <item name="ic_infinite_icon" >@drawable/ic_infinite_dark</item>
+        <item name="ic_day_view_icon" >@drawable/ic_day_view_dark</item>
+        <item name="ic_month_view_icon" >@drawable/ic_month_view_dark</item>
+        <item name="ic_next_icon" >@drawable/ic_next_dark</item>
+        <item name="ic_last_icon" >@drawable/ic_last_dark</item>
+    </style>
+
+    <style name="MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@android:color/holo_blue_light</item>
+    </style>
+
+    <style name="MyActionBarThemeGray" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/my_gray_light</item>
+    </style>
+
+    <style name="MyActionBarThemeGreen" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@android:color/holo_green_light</item>
+    </style>
+
+    <style name="MyActionBarThemeOrange" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@android:color/holo_orange_light</item>
+    </style>
+
+    <style name="MyActionBarThemeRed" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@android:color/holo_red_light</item>
+    </style>
+
+    <style name="MyActionBarThemeWhite" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@android:color/white</item>
+    </style>
+
+    <style name="myBlueToolBar">
+        <item name="android:background">@android:color/holo_blue_light</item>
+    </style>
+
+    <style name="myGrayToolBar">
+        <item name="android:background">@color/my_gray_light</item>
+    </style>
+
+    <style name="myGreenToolBar">
+        <item name="android:background">@android:color/holo_green_light</item>
+    </style>
+
+    <style name="myOrangeToolBar">
+        <item name="android:background">@android:color/holo_orange_light</item>
+    </style>
+
+    <style name="myRedToolBar">
+        <item name="android:background">@android:color/holo_red_light</item>
+    </style>
+
+    <style name="myWhiteToolBar">
+        <item name="android:background">@android:color/white</item>
+    </style>
+
+</resources>

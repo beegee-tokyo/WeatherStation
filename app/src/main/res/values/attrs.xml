@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="myBackground" format="reference|color"/>
+    <attr name="myToolBar" format="reference|color"/>
+
+    <attr name="ic_infinite_icon" format="reference"/>
+    <attr name="ic_day_view_icon" format="reference"/>
+    <attr name="ic_month_view_icon" format="reference"/>
+    <attr name="ic_next_icon" format="reference"/>
+    <attr name="ic_last_icon" format="reference"/>
+</resources>

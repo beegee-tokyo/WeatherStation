@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+                                          android:id="@+id/toolbar"
+                                          style="?myToolBar"
+                                          android:layout_width="match_parent"
+                                          android:layout_height="wrap_content">
+
+    <RelativeLayout
+        style="?myToolBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="6">
+
+        <ImageButton
+            android:id="@+id/b_tb_up"
+            style="?myToolBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="@string/app_name"
+            android:onClick="onClick"/>
+
+        <ImageButton
+            android:id="@+id/b_last"
+            style="?myToolBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="?attr/ic_last_icon"
+            android:contentDescription="@string/app_name"
+            android:onClick="onClick"
+            android:layout_gravity="center"
+            android:layout_toLeftOf="@+id/b_next"
+            android:layout_toStartOf="@+id/b_next"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:visibility="gone"/>
+
+        <ImageButton
+            android:id="@+id/b_next"
+            style="?myToolBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="?attr/ic_next_icon"
+            android:contentDescription="@string/app_name"
+            android:onClick="onClick"
+            android:layout_gravity="center"
+            android:layout_toLeftOf="@+id/b_month_view"
+            android:layout_toStartOf="@+id/b_month_view"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:visibility="gone"/>
+
+        <ImageButton
+            android:id="@+id/b_month_view"
+            style="?myToolBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="?attr/ic_month_view_icon"
+            android:contentDescription="@string/app_name"
+            android:onClick="onClick"
+            android:layout_gravity="center"
+            android:layout_toLeftOf="@+id/b_day_view"
+            android:layout_toStartOf="@+id/b_day_view"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
+
+        <ImageButton
+            android:id="@+id/b_day_view"
+            style="?myToolBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="?attr/ic_day_view_icon"
+            android:contentDescription="@string/app_name"
+            android:onClick="onClick"
+            android:layout_gravity="center"
+            android:layout_toLeftOf="@+id/b_infinite"
+            android:layout_toStartOf="@+id/b_infinite"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
+
+        <ImageButton
+            android:id="@+id/b_infinite"
+            style="?myToolBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="?attr/ic_infinite_icon"
+            android:contentDescription="@string/app_name"
+            android:onClick="onClick"
+            android:layout_gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.Toolbar>
