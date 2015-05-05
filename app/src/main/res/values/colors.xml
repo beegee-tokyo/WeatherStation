@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimaryDark">@android:color/holo_blue_dark</color>
-    <color name="colorPrimary">@android:color/holo_blue_light</color>
-    <color name="colorPrimaryDark2">@android:color/holo_blue_dark</color>
-    <color name="colorPrimary2">@android:color/holo_blue_light</color>
-    <color name="trans_white">#aaffffff</color>
-
+    <color name="trans_grey">#aa999999</color>
     <color name="my_green_bright">#ffccff00</color>
     <color name="my_gray_bright">#ffCCCCCC</color>
     <color name="my_gray_light">#ff999999</color>

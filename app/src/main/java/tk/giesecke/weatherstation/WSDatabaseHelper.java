@@ -9,10 +9,10 @@ import android.util.Log;
 
 /**
  * WSDatabaseHelper
- * main activity
+ * database access methods
  *
  * @author Bernd Giesecke
- * @version 1.0 April 13, 2015.
+ * @version 0.1 beta May 5, 2015.
  */
 class WSDatabaseHelper extends SQLiteOpenHelper {
 
@@ -79,7 +79,7 @@ class WSDatabaseHelper extends SQLiteOpenHelper {
 	 * @param currAvgHumid
 	 *            average humidity of a day
 	 * @return <code>boolean</code>
-	 *            true if addDay was successfull
+	 *            true if addDay was successful
 	 *            false if addDay failed
 	 */
 	public boolean addDay(SQLiteDatabase db, int timeStamp, int dayStamp, int dayNumber,
@@ -179,7 +179,7 @@ class WSDatabaseHelper extends SQLiteOpenHelper {
 	 *            pointer to database
 	 *
      */
-    void deleteDay(SQLiteDatabase db) {
+	private void deleteDay(SQLiteDatabase db) {
 		/** Access to the database */
 		//db = this.getWritableDatabase();
 		db.delete(TABLE_WEATHER, "dn=" + 31, null);

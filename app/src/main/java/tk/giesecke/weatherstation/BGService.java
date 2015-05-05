@@ -22,7 +22,7 @@ import java.util.List;
  * and save them into the shared preferences
  *
  * @author Bernd Giesecke
- * @version 1.0 April 13, 2015.
+ * @version 0.1 beta May 5, 2015.
  */
 public class BGService extends Service implements SensorEventListener {
 
@@ -113,8 +113,8 @@ public class BGService extends Service implements SensorEventListener {
 	 * Reading the Temperature Sensor</a>
 	 * @see <a href="http://www.survivingwithandroid.com/2013/09/android-sensor-tutorial-barometer-sensor.html">
 	 * Android Sensor Tutorial: Barometer Sensor</a>
-	 * @see <a href="http://www.survivingwithandroid.com/2013/09/android-sensor-tutorial-barometer-sensor.html">
-	 * Android Sensor Tutorial: Barometer Sensor</a>
+	 * @see <a href="http://code.tutsplus.com/tutorials/building-apps-with-environment-sensors--pre-46879">
+	 * Building Apps with Environment Sensors</a>
 	 *
 	 * @param event
 	 *            SensorEvent event.
@@ -130,16 +130,16 @@ public class BGService extends Service implements SensorEventListener {
 
 		switch (event.sensor.getType()) {
 			case Sensor.TYPE_AMBIENT_TEMPERATURE:
-				lastTempValue = Math.round(event.values[0] * 100.0f) / 100.0f;
+				lastTempValue = Math.round(event.values[0] * 1000.0f) / 1000.0f;
 				break;
 			case Sensor.TYPE_PRESSURE:
-				lastPressValue = Math.round(event.values[0] * 100.0f) / 100.0f;
+				lastPressValue = Math.round(event.values[0] * 1000.0f) / 1000.0f;
 				break;
 			case Sensor.TYPE_RELATIVE_HUMIDITY:
-				lastHumidValue = Math.round(event.values[0] * 100.0f) / 100.0f;
+				lastHumidValue = Math.round(event.values[0] * 1000.0f) / 1000.0f;
 				break;
 		}
-		if (lastTempValue != -9999 && lastPressValue != -9999 && lastHumidValue != 9999)
+		if (lastTempValue != -9999 && lastPressValue != -9999 && lastHumidValue != -9999)
 		{
 			if (BuildConfig.DEBUG) Log.d(LOG_TAG, "writing triggered: lastTempValue = "+lastTempValue
 					+" lastPressValue = "+lastPressValue
@@ -153,7 +153,7 @@ public class BGService extends Service implements SensorEventListener {
 					stopSelf();
 				} else {
 					// retry until retry counter reaches 20
-					lastTempValue = lastPressValue = lastHumidValue = 9999;
+					lastTempValue = lastPressValue = lastHumidValue = -9999;
 					if (retryCounter++ == 20) {
 						mSensorManager.unregisterListener(this);
 						stopSelf();
@@ -174,7 +174,7 @@ public class BGService extends Service implements SensorEventListener {
 					stopSelf();
 				} else {
 					// retry until retry counter reaches 20
-					lastTempValue = lastPressValue = lastHumidValue = 9999;
+					lastTempValue = lastPressValue = lastHumidValue = -9999;
 					if (retryCounter++ == 20) {
 						mSensorManager.unregisterListener(this);
 						stopSelf();

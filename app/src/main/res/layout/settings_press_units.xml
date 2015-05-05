@@ -1,96 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content">
 
     <RadioGroup
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onClick"
-        android:id="@+id/rg_theme">
+        android:id="@+id/rg_press1">
 
         <RadioButton
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/themeBlue"
-            android:id="@+id/rb_blue"
+            android:text="@string/pressSign"
+            android:id="@+id/rb_mBar"
             android:button="@null"
             android:drawableRight="@android:drawable/btn_radio"
             android:drawableEnd="@android:drawable/btn_radio"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:background="@android:color/holo_blue_dark"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
-
-        <RadioButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/themeGreen"
-            android:id="@+id/rb_green"
-            android:button="@null"
-            android:drawableRight="@android:drawable/btn_radio"
-            android:drawableEnd="@android:drawable/btn_radio"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:background="@android:color/holo_green_dark"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
-
-        <RadioButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/themeGray"
-            android:id="@+id/rb_gray"
-            android:button="@null"
-            android:drawableRight="@android:drawable/btn_radio"
-            android:drawableEnd="@android:drawable/btn_radio"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:background="@android:color/darker_gray"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
-
-        <RadioButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/themeOrange"
-            android:id="@+id/rb_orange"
-            android:button="@null"
-            android:drawableRight="@android:drawable/btn_radio"
-            android:drawableEnd="@android:drawable/btn_radio"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:background="@android:color/holo_orange_dark"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
-
-        <RadioButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/themeRed"
-            android:id="@+id/rb_red"
-            android:button="@null"
-            android:drawableRight="@android:drawable/btn_radio"
-            android:drawableEnd="@android:drawable/btn_radio"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:background="@android:color/holo_red_dark"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
-
-        <RadioButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/themeWhite"
-            android:id="@+id/rb_white"
-            android:button="@null"
-            android:drawableRight="@android:drawable/btn_radio"
-            android:drawableEnd="@android:drawable/btn_radio"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:background="@android:color/white"
             android:paddingRight="10dp"
+            android:checked="true"/>
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pressSignP"
+            android:id="@+id/rb_psi"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:drawableEnd="@android:drawable/btn_radio"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingLeft="10dp"
-            android:textColor="@android:color/black" />
+            android:paddingRight="10dp" />
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pressSignA"
+            android:id="@+id/rb_atm"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:drawableEnd="@android:drawable/btn_radio"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pressSignT"
+            android:id="@+id/rb_Torr"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:drawableEnd="@android:drawable/btn_radio"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
 
     </RadioGroup>
 
-</ScrollView>
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rg_press2">
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pressSignK"
+            android:id="@+id/rb_kPa"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:drawableEnd="@android:drawable/btn_radio"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pressSignH"
+            android:id="@+id/rb_hPa"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:drawableEnd="@android:drawable/btn_radio"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pressSignM"
+            android:id="@+id/rb_mmHg"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:drawableEnd="@android:drawable/btn_radio"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+
+        <RadioButton
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pressSignI"
+            android:id="@+id/rb_inHg"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:drawableEnd="@android:drawable/btn_radio"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+
+    </RadioGroup>
+
+</LinearLayout>

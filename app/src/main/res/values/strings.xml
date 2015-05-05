@@ -15,7 +15,16 @@
     <string name="currMonth">Last 31 days</string>
     <string name="currCont">Continuous</string>
     <string name="tempSign" translatable="false">&#176;C</string>
+    <string name="tempSignF" translatable="false">&#176;F</string>
+    <string name="tempSignK" translatable="false">K</string>
     <string name="pressSign" translatable="false">mBar</string>
+    <string name="pressSignI" translatable="false">inHg</string>
+    <string name="pressSignK" translatable="false">kPa</string>
+    <string name="pressSignA" translatable="false">atm</string>
+    <string name="pressSignT" translatable="false">Torr</string>
+    <string name="pressSignP" translatable="false">psi</string>
+    <string name="pressSignH" translatable="false">hPa</string>
+    <string name="pressSignM" translatable="false">mmHg</string>
     <string name="humidSign" translatable="false">%</string>
     <string name="waitForSensor">Query sensor</string>
     <string name="sensorNotAvail">Not available</string>
@@ -36,13 +45,14 @@
     <string name="noFileSelected">Please select a file from which you want to restore the data.</string>
     <string name="bRestore">Restore</string>
     <string name="restoreFileTitle">Available backup files</string>
-    <string name="selectThemeTitle">Available themes</string>
     <string name="themeBlue">Blue</string>
     <string name="themeGreen">Green</string>
     <string name="themeGray">Grey</string>
     <string name="themeOrange">Orange</string>
     <string name="themeRed">Red</string>
     <string name="themeWhite">White</string>
+    <string name="clearTitle">Clear recorded data</string>
+    <string name="clearText">Do you really want to delete all recorded data?</string>
 
     <!-- Drawer messages -->
     <string name="drawer_open">Open navigation drawer</string>
@@ -50,7 +60,11 @@
     <string name="sbExport">Export records</string>
     <string name="sbBackup">Backup records</string>
     <string name="sbRestore">Restore records</string>
-    <string name="sbThemes">Select theme</string>
+    <string name="sbClear">Clear recorded data</string>
+    <string name="sbSettings">Settings</string>
+    <string name="sbTempUnits">Temperature units</string>
+    <string name="sbPressUnits">Pressure units</string>
+    <string name="sbThemes">Theme</string>
 
     <!-- Google adMob -->
     <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>

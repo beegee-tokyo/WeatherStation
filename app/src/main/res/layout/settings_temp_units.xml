@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rg_temp">
+
+    <RadioButton
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tempSign"
+        android:id="@+id/rb_centigrade"
+        android:button="@null"
+        android:drawableRight="@android:drawable/btn_radio"
+        android:drawableEnd="@android:drawable/btn_radio"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:checked="true"/>
+
+    <RadioButton
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tempSignF"
+        android:id="@+id/rb_fahrenheit"
+        android:button="@null"
+        android:drawableRight="@android:drawable/btn_radio"
+        android:drawableEnd="@android:drawable/btn_radio"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
+
+    <RadioButton
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tempSignK"
+        android:id="@+id/rb_kelvin"
+        android:button="@null"
+        android:drawableRight="@android:drawable/btn_radio"
+        android:drawableEnd="@android:drawable/btn_radio"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
+
+</RadioGroup>
