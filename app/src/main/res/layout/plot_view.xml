@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:id="@+id/modern"
+              android:visibility="gone">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/trTemp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/currTemp"
+            android:id="@+id/tvCurrTemp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/tempSign"
+            android:id="@+id/tvCurrTempView"
+            android:layout_weight="1"/>
+
+    </TableRow>
+
+    <!--suppress AndroidUnknownAttribute -->
+    <com.androidplot.xy.XYPlot
+        android:id="@+id/xyTempPlot"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.3"
+        title="@string/currTemp"
+        />
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:id="@+id/trPress">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/currPress"
+            android:id="@+id/tvCurrPress"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/pressSign"
+            android:id="@+id/tvCurrPressView"
+            android:layout_weight="1"/>
+
+    </TableRow>
+
+    <!--suppress AndroidUnknownAttribute -->
+    <com.androidplot.xy.XYPlot
+        android:id="@+id/xyPressPlot"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.3"
+        title="@string/currPress"
+        />
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:id="@+id/trHumid">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/currHumid"
+            android:id="@+id/tvCurrHumid"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/humidSign"
+            android:id="@+id/tvCurrHumidView"
+            android:layout_weight="1"/>
+
+    </TableRow>
+
+    <!--suppress AndroidUnknownAttribute -->
+    <com.androidplot.xy.XYPlot
+        android:id="@+id/xyHumidPlot"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.3"
+        title="@string/currHumid"
+        />
+
+</LinearLayout>
+
+

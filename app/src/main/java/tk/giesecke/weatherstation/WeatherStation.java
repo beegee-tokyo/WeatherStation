@@ -265,13 +265,7 @@ public class WeatherStation extends ActionBarActivity implements
 			getWindow().setStatusBarColor(colorDark);
 		}
 
-		setContentView(R.layout.scientific);
-
-		// set pointers to the gauges
-		gvThermo=(GaugeView)findViewById(R.id.thermometer);
-		gvBaro=(GaugeView)findViewById(R.id.barometer);
-		gvHygro =(GaugeView)findViewById(R.id.hygrometer);
-		gvBig = gvThermo;
+		setContentView(R.layout.weatherstation);
 
 		/** Pointer to action bar */
 		Toolbar actionBar = (Toolbar) findViewById(R.id.toolbar);
@@ -311,6 +305,65 @@ public class WeatherStation extends ActionBarActivity implements
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+		// Register listener for swipes
+		new SwipeDetector(mDrawerLayout).setOnSwipeListener(new SwipeDetector.onSwipeEvent() {
+			@Override
+			public void SwipeEventDetected(SwipeDetector.SwipeTypeEnum swipeType) {
+				/** Layout for modern view */
+				LinearLayout modernLayout = (LinearLayout)findViewById(R.id.modern);
+				/** Layout for vintage view */
+				RelativeLayout vintageLayout = (RelativeLayout)findViewById(R.id.vintage);
+				if (swipeType == SwipeDetector.SwipeTypeEnum.LEFT_TO_RIGHT) {
+					// TODO rework when 3rd view is added
+					switch (uiLayout) {
+						case 0:
+							modernLayout.setVisibility(View.GONE);
+							vintageLayout.setVisibility(View.VISIBLE);
+							findViewById(R.id.b_infinite).setVisibility(View.GONE);
+							findViewById(R.id.b_day_view).setVisibility(View.GONE);
+							findViewById(R.id.b_month_view).setVisibility(View.GONE);
+							uiLayout = 1;
+							mDrawerLayout.closeDrawers();
+							// TODO
+							break;
+						case 1:
+							vintageLayout.setVisibility(View.GONE);
+							modernLayout.setVisibility(View.VISIBLE);
+							findViewById(R.id.b_infinite).setVisibility(View.VISIBLE);
+							findViewById(R.id.b_day_view).setVisibility(View.VISIBLE);
+							findViewById(R.id.b_month_view).setVisibility(View.VISIBLE);
+							uiLayout = 0;
+							mDrawerLayout.closeDrawers();
+							break;
+					}
+					mPrefs.edit().putInt("UI_Layout", uiLayout).apply();
+				} else if (swipeType == SwipeDetector.SwipeTypeEnum.RIGHT_TO_LEFT) {
+					// TODO rework when 3rd view is added
+					switch (uiLayout) {
+						case 0:
+							modernLayout.setVisibility(View.GONE);
+							vintageLayout.setVisibility(View.VISIBLE);
+							findViewById(R.id.b_infinite).setVisibility(View.GONE);
+							findViewById(R.id.b_day_view).setVisibility(View.GONE);
+							findViewById(R.id.b_month_view).setVisibility(View.GONE);
+							uiLayout = 1;
+							mDrawerLayout.closeDrawers();
+							// TODO
+							break;
+						case 1:
+							vintageLayout.setVisibility(View.GONE);
+							modernLayout.setVisibility(View.VISIBLE);
+							findViewById(R.id.b_infinite).setVisibility(View.VISIBLE);
+							findViewById(R.id.b_day_view).setVisibility(View.VISIBLE);
+							findViewById(R.id.b_month_view).setVisibility(View.VISIBLE);
+							uiLayout = 0;
+							mDrawerLayout.closeDrawers();
+							break;
+					}
+					mPrefs.edit().putInt("UI_Layout", uiLayout).apply();
+				}
+			}
+		});
 		// Prepare views of weather values
 		tvCurrTempView = (TextView) findViewById(R.id.tvCurrTempView);
 		tvCurrTempView2 = (TextView) findViewById(R.id.tvCurrTempView2);
@@ -324,6 +377,12 @@ public class WeatherStation extends ActionBarActivity implements
 		tvCurrTempView2.setText(getString(R.string.waitForSensor));
 		tvCurrPressView.setText(getString(R.string.waitForSensor));
 		tvCurrHumidView.setText(getString(R.string.waitForSensor));
+
+		// set pointers to the gauges
+		gvThermo=(GaugeView)findViewById(R.id.thermometer);
+		gvBaro=(GaugeView)findViewById(R.id.barometer);
+		gvHygro =(GaugeView)findViewById(R.id.hygrometer);
+		gvBig = gvThermo;
 
 		// connect to temperature sensor
 		mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -377,14 +436,14 @@ public class WeatherStation extends ActionBarActivity implements
 		/** Layout for vintage view */
 		RelativeLayout vintageLayout = (RelativeLayout)findViewById(R.id.vintage);
 		switch (uiLayout) {
-			case 0:
+			case 0: // Plot view
 				vintageLayout.setVisibility(View.GONE);
 				modernLayout.setVisibility(View.VISIBLE);
 				findViewById(R.id.b_infinite).setVisibility(View.VISIBLE);
 				findViewById(R.id.b_day_view).setVisibility(View.VISIBLE);
 				findViewById(R.id.b_month_view).setVisibility(View.VISIBLE);
 				break;
-			case 1:
+			case 1: // Vintage view
 				modernLayout.setVisibility(View.GONE);
 				vintageLayout.setVisibility(View.VISIBLE);
 				findViewById(R.id.b_infinite).setVisibility(View.GONE);
