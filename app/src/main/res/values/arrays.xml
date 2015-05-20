@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string-array name="updateRate" tools:ignore="MissingTranslation">
+        <item>1s</item>
+        <item>5s</item>
+        <item>10s</item>
+        <item>30s</item>
+        <item>1min</item>
+        <item>5min</item>
+        <item>10min</item>
+        <item>30min</item>
+        <item>1h</item>
+    </string-array>
+
+    <integer-array name="intUpdateRate">
+        <item>1000</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>30000</item>
+        <item>60000</item>
+        <item>300000</item>
+        <item>600000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+    </integer-array>
+
+    <string-array name="mbarRanges">
+        <item>950</item>
+        <item>995</item>
+        <item>1025</item>
+        <item>1070</item>
+    </string-array>
+
+    <string-array name="humidRanges">
+        <item>0</item>
+        <item>40</item>
+        <item>70</item>
+        <item>100</item>
+    </string-array>
+
+    <string-array name="rangeColors">
+        <item>#FFD700</item>
+        <item>#FFD700</item>
+        <item>#FFD700</item>
+        <item>#FFD700</item>
+    </string-array>
+
+    <string-array name="tempRanges">
+        <item>-30f</item>
+        <item>32f</item>
+        <item>64f</item>
+        <item>100f</item>
+    </string-array>
+
+</resources>

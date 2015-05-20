@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:shrinkColumns="1">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/androidName"
+            android:id="@+id/tv_sensor_name"
+            android:layout_column="0"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/androidName"
+            android:id="@+id/tv_sensor_name_value"
+            android:layout_column="1"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:maxLines="2"
+            android:singleLine="false"/>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/sensorType"
+            android:id="@+id/tv_sensor_type"
+            android:layout_column="0"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/sensorType"
+            android:id="@+id/tv_sensor_type_value"
+            android:layout_column="1"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:maxLines="2"/>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/vendorName"
+            android:id="@+id/tv_sensor_vendor"
+            android:layout_column="0"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/vendorName"
+            android:id="@+id/tv_sensor_vendor_value"
+            android:layout_column="1"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:maxLines="2"/>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/sensorVersion"
+            android:id="@+id/tv_sensor_version"
+            android:layout_column="0"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/sensorVersion"
+            android:id="@+id/tv_sensor_version_value"
+            android:layout_column="1"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:maxLines="2"/>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/sensorResolution"
+            android:id="@+id/tv_resolution"
+            android:layout_column="0"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/sensorResolution"
+            android:id="@+id/tv_resolution_value"
+            android:layout_column="1"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:maxLines="2"/>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/sensorPower"
+            android:id="@+id/tv_sensor_power"
+            android:layout_column="0"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/sensorPower"
+            android:id="@+id/tv_sensor_power_value"
+            android:layout_column="1"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:maxLines="2"/>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/sensorRate"
+            android:id="@+id/tv_sensor_rate"
+            android:layout_column="0"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/sensorRate"
+            android:id="@+id/tv_sensor_rate_value"
+            android:layout_column="1"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:maxLines="2"/>
+
+    </TableRow>
+
+</TableLayout>

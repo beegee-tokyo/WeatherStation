@@ -15,6 +15,7 @@
         <item name="android:textColorTertiary">@android:color/black</item>
         <item name="android:colorBackground">@android:color/holo_blue_dark</item>
         <item name="myBackground">@android:color/holo_blue_bright</item>
+        <item name="myWidgetBorder">@android:color/holo_blue_dark</item>
         <item name="android:displayOptions">useLogo|showHome</item>
         <item name="myToolBar">@style/myBlueToolBar</item>
         <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
@@ -26,7 +27,7 @@
         <item name="ic_last_icon" >@drawable/ic_last</item>
     </style>
 
-    <style name="AppTheme_Gray.Base" parent="Theme.AppCompat">
+    <style name="AppTheme_Gray.Base" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/my_gray_light</item>
         <item name="colorPrimaryDark">@color/my_gray_bright</item>
         <item name="android:windowNoTitle">true</item>
@@ -39,6 +40,7 @@
         <item name="android:textColorTertiary">@android:color/black</item>
         <item name="android:colorBackground">@color/my_gray_dark</item>
         <item name="myBackground">@color/my_gray_bright</item>
+        <item name="myWidgetBorder">@color/my_gray_dark</item>
         <item name="android:displayOptions">useLogo|showHome</item>
         <item name="myToolBar">@style/myGrayToolBar</item>
         <item name="android:actionBarStyle">@style/MyActionBarThemeGray</item>
@@ -50,7 +52,7 @@
         <item name="ic_last_icon" >@drawable/ic_last</item>
     </style>
 
-    <style name="AppTheme_Green.Base" parent="Theme.AppCompat">
+    <style name="AppTheme_Green.Base" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@android:color/holo_green_light</item>
         <item name="colorPrimaryDark">@color/my_green_bright</item>
         <item name="android:windowNoTitle">true</item>
@@ -63,6 +65,7 @@
         <item name="android:textColorTertiary">@android:color/black</item>
         <item name="android:colorBackground">@android:color/holo_green_dark</item>
         <item name="myBackground">@color/my_green_bright</item>
+        <item name="myWidgetBorder">@android:color/holo_green_dark</item>
         <item name="android:displayOptions">useLogo|showHome</item>
         <item name="myToolBar">@style/myGreenToolBar</item>
         <item name="android:actionBarStyle">@style/MyActionBarThemeGreen</item>
@@ -74,7 +77,7 @@
         <item name="ic_last_icon" >@drawable/ic_last</item>
     </style>
 
-    <style name="AppTheme_Orange.Base" parent="Theme.AppCompat">
+    <style name="AppTheme_Orange.Base" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@android:color/holo_orange_light</item>
         <item name="colorPrimaryDark">@color/my_orange_bright</item>
         <item name="android:windowNoTitle">true</item>
@@ -87,6 +90,7 @@
         <item name="android:textColorTertiary">@android:color/black</item>
         <item name="android:colorBackground">@android:color/holo_orange_dark</item>
         <item name="myBackground">@color/my_orange_bright</item>
+        <item name="myWidgetBorder">@android:color/holo_orange_dark</item>
         <item name="android:displayOptions">useLogo|showHome</item>
         <item name="myToolBar">@style/myOrangeToolBar</item>
         <item name="android:actionBarStyle">@style/MyActionBarThemeOrange</item>
@@ -98,7 +102,7 @@
         <item name="ic_last_icon" >@drawable/ic_last</item>
     </style>
 
-    <style name="AppTheme_Red.Base" parent="Theme.AppCompat">
+    <style name="AppTheme_Red.Base" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@android:color/holo_red_light</item>
         <item name="colorPrimaryDark">@color/my_red_bright</item>
         <item name="android:windowNoTitle">true</item>
@@ -106,11 +110,12 @@
         <item name="android:windowBackground">@color/my_red_bright</item>
         <item name="android:colorBackgroundCacheHint">@android:color/holo_red_dark</item>
         <item name="android:background">@android:color/transparent</item>
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:textColorSecondary">@android:color/white</item>
-        <item name="android:textColorTertiary">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:textColorSecondary">@android:color/black</item>
+        <item name="android:textColorTertiary">@android:color/black</item>
         <item name="android:colorBackground">@android:color/holo_red_dark</item>
         <item name="myBackground">@color/my_red_bright</item>
+        <item name="myWidgetBorder">@android:color/holo_red_dark</item>
         <item name="android:displayOptions">useLogo|showHome</item>
         <item name="myToolBar">@style/myRedToolBar</item>
         <item name="android:actionBarStyle">@style/MyActionBarThemeRed</item>
@@ -122,7 +127,7 @@
         <item name="ic_last_icon" >@drawable/ic_last</item>
     </style>
 
-    <style name="AppTheme_White.Base" parent="Theme.AppCompat">
+    <style name="AppTheme_White.Base" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@android:color/white</item>
         <item name="colorPrimaryDark">@android:color/white</item>
         <item name="android:windowNoTitle">true</item>
@@ -135,6 +140,7 @@
         <item name="android:textColorTertiary">@android:color/black</item>
         <item name="android:colorBackground">@color/my_white_dark</item>
         <item name="myBackground">@android:color/white</item>
+        <item name="myWidgetBorder">@color/my_white_dark</item>
         <item name="android:displayOptions">useLogo|showHome</item>
         <item name="myToolBar">@style/myWhiteToolBar</item>
         <item name="android:actionBarStyle">@style/MyActionBarThemeWhite</item>

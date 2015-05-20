@@ -1,5 +1,7 @@
 package tk.giesecke.weatherstation;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -8,16 +10,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,38 +27,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.androidplot.ui.AnchorPosition;
-import com.androidplot.ui.TextOrientationType;
-import com.androidplot.ui.XLayoutStyle;
-import com.androidplot.ui.YLayoutStyle;
 import com.androidplot.util.PixelUtils;
 
 import com.androidplot.xy.*;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -74,22 +59,50 @@ public class WeatherStation extends ActionBarActivity implements
 	/** Debug tag */
 	private static final String LOG_TAG = "WeatherStation";
     /** Application context */
-    private Context appContext;
+    public static Context appContext;
+	/** Application context */
+	private static Activity appActivity;
 	/** Access to shared preferences of application*/
 	private SharedPreferences mPrefs;
 	/** Pointer to drawer layout */
 	private DrawerLayout mDrawerLayout;
+	/** Time for updating content of main UI */
+	private int autoUpdate;
+	/** Number picker index of time for updating content of main UI */
+	private int autoUpdateIndex;
+
+	/** Custom view for analog type thermometer */
+	private GaugeView gvThermo;
+	/** Custom view for analog type barometer */
+	private GaugeView gvBaro;
+	/** Custom view for analog type hygrometer */
+	private GaugeView gvHygro;
+	/** Current main gauge viewed */
+	private GaugeView gvBig;
+
+	/** Flag for update request content of main UI */
+	private boolean isUpdateRequest;
+	/** Last temperature for ui display */
+	private float lastTempValue;
+	/** Last pressure for ui display  */
+	private float lastPressValue;
+	/** Last pressure for vintage ui display  */
+	private float lastPressValue2;
+	/** Last humidity for ui display */
+	private float lastHumidValue;
 
 	/** User selected theme */
 	private int themeColor;
     /** User clicked theme */
     private int selectColor;
+	/** Current selected UI layout */
+	private int uiLayout;
 	/** User selected temperature unit */
-	private int tempUnit;
+	static int tempUnit;
 	/** User clicked temperature unit */
 	private int selectTempUnit;
 	/** User selected pressure unit */
-	private int pressUnit;
+	static int pressUnit;
 	/** User clicked pressure unit */
 	private int selectPressUnit;
     /** Radio group column 1 of double column radio group */
@@ -102,58 +115,70 @@ public class WeatherStation extends ActionBarActivity implements
 	private RadioGroup.OnCheckedChangeListener PressUnit2;
 
 	/** Dark color of selected theme */
-	private int colorDark;
+	static int colorDark;
     /** Bright color of selected theme */
-    private int colorBright;
+    static int colorBright;
 
 	/** SensorManager to get info about available sensors */
-	private SensorManager mSensorManager;
+	static SensorManager mSensorManager;
 	/** Access to temp sensor */
-	private Sensor mTempSensor;
+	static Sensor mTempSensor;
 	/** Access to pressure sensor */
-	private Sensor mPressSensor;
+	static Sensor mPressSensor;
 	/** Access to humidity sensor */
-	private Sensor mHumidSensor;
+	static Sensor mHumidSensor;
 	/** Textview to show current temperature */
 	private TextView tvCurrTempView;
+	/** Textview to show current temperature in vintage view*/
+	private TextView tvCurrTempView2;
 	/** Textview to show current pressure */
 	private TextView tvCurrPressView;
+	/** Textview to show current pressure in vintage view*/
+	private TextView tvCurrPressView2;
 	/** Textview to show current humidity */
 	private TextView tvCurrHumidView;
+	/** Textview to show current humidity in vintage view*/
+	private TextView tvCurrHumidView2;
+	/** Last measured temperature for tendency detection */
+	private float lastTemp;
+	/** Last measured pressure for tendency detection */
+	private float lastPress;
+	/** Last measured humidity for tendency detection */
+	private float lastHumid;
 
 	/** Number of plot y values */
-    private int plotValues = 20;
+    private static int plotValues = 20;
 	/** Day to show in day view */
     private int dayToShow = 1;
 	/** Flag for continuous update of charts */
     private boolean isContinuous = true;
 	/** Number of recorded days */
-    private int numOfDayRecords;
+	static int numOfDayRecords;
 
 	/** XYPlot view for the temperature chart */
-	private XYPlot tempLevelsPlot;
+	static XYPlot tempLevelsPlot;
 	/** Data series for the temperature */
-	public static SimpleXYSeries tempLevelsSeries = null;
+	static SimpleXYSeries tempLevelsSeries = null;
 	/** XYPlot view for the barometric pressure chart */
-	private XYPlot pressLevelsPlot;
+	static XYPlot pressLevelsPlot;
 	/** Data series for the barometric pressure */
-	public static SimpleXYSeries pressLevelsSeries = null;
+	static SimpleXYSeries pressLevelsSeries = null;
 	/** XYPlot view for the humidity chart */
-	private XYPlot humidLevelsPlot;
+	static XYPlot humidLevelsPlot;
 	/** Data series for the humidity */
-	public static SimpleXYSeries humidLevelsSeries = null;
+	static SimpleXYSeries humidLevelsSeries = null;
     /** Min value of temperature series */
-    private float minTempValue;
+    static float minTempValue;
 	/** Max value of temperature series */
-    private float maxTempValue;
+	static float maxTempValue;
 	/** Min value of pressure series */
-    private float minPressValue;
+	static float minPressValue;
 	/** Max value of pressure series */
-    private float maxPressValue;
+	static float maxPressValue;
 	/** Min value of humidity series */
-    private float minHumidValue;
+	static float minHumidValue;
 	/** Max value of humidity series */
-    private float maxHumidValue;
+	static float maxHumidValue;
 
 	/** Action bar drawer toggle */
 	private ActionBarDrawerToggle mDrawerToggle;
@@ -163,35 +188,36 @@ public class WeatherStation extends ActionBarActivity implements
 	private CharSequence mTitle;
 
 	/** Instance of weather db helper */
-    private WSDatabaseHelper wsDbHelper;
+    public static WSDatabaseHelper wsDbHelper;
 	/** Access to weather db  */
-    private SQLiteDatabase dataBase;
+    public static SQLiteDatabase dataBase;
     /** String with path and filename to location of backup file */
-    private String exportFilePath;
+    public static String exportFilePath;
     /** String with path and filename to location of restore file */
-    private String restoreFilePath;
+    public static String restoreFilePath;
     /** String with path to read location of JSON file */
-    private String path;
+    public static String path;
     /** Flag for result of file selection dialog */
-    private boolean isFileSelected = false;
+    static boolean isFileSelected = false;
     /** List with available backup files */
-    private final List<String> files = new ArrayList<>();
+    static final List<String> files = new ArrayList<>();
 
 	/** Small text size as float */
-    private float textSizeSmall;
+	static float textSizeSmall;
 	/** Medium text size as float */
-    private float textSizeMedium;
+	static float textSizeMedium;
 	/** 10dp margin as float */
-    private float margin10dp;
+    static float margin10dp;
 	/** 20dp margin as float */
-	private float margin20dp;
+	static float margin20dp;
 	/** 25dp margin as float */
-	private float margin25dp;
+	static float margin25dp;
 	/** 30dp margin as float */
-	private float margin30dp;
+	static float margin30dp;
 	/** 40dp margin as float */
-    private float margin40dp;
+	static float margin40dp;
 
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -239,7 +265,13 @@ public class WeatherStation extends ActionBarActivity implements
 			getWindow().setStatusBarColor(colorDark);
 		}
 
-		setContentView(R.layout.weather_station);
+		setContentView(R.layout.scientific);
+
+		// set pointers to the gauges
+		gvThermo=(GaugeView)findViewById(R.id.thermometer);
+		gvBaro=(GaugeView)findViewById(R.id.barometer);
+		gvHygro =(GaugeView)findViewById(R.id.hygrometer);
+		gvBig = gvThermo;
 
 		/** Pointer to action bar */
 		Toolbar actionBar = (Toolbar) findViewById(R.id.toolbar);
@@ -281,23 +313,31 @@ public class WeatherStation extends ActionBarActivity implements
 
 		// Prepare views of weather values
 		tvCurrTempView = (TextView) findViewById(R.id.tvCurrTempView);
+		tvCurrTempView2 = (TextView) findViewById(R.id.tvCurrTempView2);
+		/* Current big gauge value viewed */
 		tvCurrPressView = (TextView) findViewById(R.id.tvCurrPressView);
+		tvCurrPressView2 = (TextView) findViewById(R.id.tvCurrPressView2);
 		tvCurrHumidView = (TextView) findViewById(R.id.tvCurrHumidView);
+		tvCurrHumidView2 = (TextView) findViewById(R.id.tvCurrHumidView2);
 
 		tvCurrTempView.setText(getString(R.string.waitForSensor));
+		tvCurrTempView2.setText(getString(R.string.waitForSensor));
 		tvCurrPressView.setText(getString(R.string.waitForSensor));
 		tvCurrHumidView.setText(getString(R.string.waitForSensor));
 
 		// connect to temperature sensor
 		mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+
 		// connect to temperature sensor
 		mTempSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
 		// connect to air pressure sensor
 		mPressSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
 		// connect to humidity sensor
 		mHumidSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+
 		if (mTempSensor == null) {
 			tvCurrTempView.setText(getString(R.string.sensorNotAvail));
+			tvCurrTempView2.setText(getString(R.string.sensorNotAvail));
 			findViewById(R.id.trTemp).setVisibility(View.GONE);
 			findViewById(R.id.xyTempPlot).setVisibility(View.GONE);
 		}
@@ -330,13 +370,36 @@ public class WeatherStation extends ActionBarActivity implements
 		margin40dp = PixelUtils.dpToPix(40);
 
         appContext = this;
+		appActivity = this;
+		uiLayout = mPrefs.getInt("UI_Layout",0);
+		/** Layout for modern view */
+		LinearLayout modernLayout = (LinearLayout)findViewById(R.id.modern);
+		/** Layout for vintage view */
+		RelativeLayout vintageLayout = (RelativeLayout)findViewById(R.id.vintage);
+		switch (uiLayout) {
+			case 0:
+				vintageLayout.setVisibility(View.GONE);
+				modernLayout.setVisibility(View.VISIBLE);
+				findViewById(R.id.b_infinite).setVisibility(View.VISIBLE);
+				findViewById(R.id.b_day_view).setVisibility(View.VISIBLE);
+				findViewById(R.id.b_month_view).setVisibility(View.VISIBLE);
+				break;
+			case 1:
+				modernLayout.setVisibility(View.GONE);
+				vintageLayout.setVisibility(View.VISIBLE);
+				findViewById(R.id.b_infinite).setVisibility(View.GONE);
+				findViewById(R.id.b_day_view).setVisibility(View.GONE);
+				findViewById(R.id.b_month_view).setVisibility(View.GONE);
+				break;
+		}
 
         path = Environment.getExternalStorageDirectory() + "/" + "WeatherStation/";
 
 		tempUnit = mPrefs.getInt("temp_unit", 0);
 		pressUnit = mPrefs.getInt("press_unit", 0);
+		lastTemp = lastPress = lastHumid = 0f;
 
-		initCharts(true, true, 1); // continuous, day view, view today
+		Utils.initCharts(true, true, 1, this); // continuous, day view, view today
 
 		/** Intent of background service */
 		Intent alarmIntent = new Intent(this, BGService.class);
@@ -348,6 +411,12 @@ public class WeatherStation extends ActionBarActivity implements
 		AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
 				3600000, pendingStartIntent);
+
+		/** View for Google Adsense ads */
+		AdView mAdView = (AdView) findViewById(R.id.adView);
+		/** Request for ad from Google */
+		AdRequest adRequest = new AdRequest.Builder().build();
+		mAdView.loadAd(adRequest);
 	}
 
 	@Override
@@ -370,12 +439,36 @@ public class WeatherStation extends ActionBarActivity implements
 		if (mHumidSensor != null) {
 			mSensorManager.registerListener(this, mHumidSensor, SensorManager.SENSOR_DELAY_NORMAL);
 		}
+
+		/** Handler to update UI with an delay of <code>autoUpdate</code> seconds */
+		int[] intUpdateRate = getResources().getIntArray(R.array.intUpdateRate);
+		autoUpdateIndex = mPrefs.getInt("UpdateRate", autoUpdateIndex);
+		autoUpdate = intUpdateRate[autoUpdateIndex];
+		final Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				runOnUiThread(new Runnable() {
+					public void run() {
+						plotRefresh();
+					}
+				});
+			}
+		}, autoUpdate);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		mSensorManager.unregisterListener(this);
+		if (mTempSensor != null) {
+			mSensorManager.unregisterListener(this, mTempSensor);
+		}
+		if (mPressSensor != null) {
+			mSensorManager.unregisterListener(this, mPressSensor);
+		}
+		if (mHumidSensor != null) {
+			mSensorManager.unregisterListener(this, mHumidSensor);
+		}
 	}
 
 	@Override
@@ -388,17 +481,42 @@ public class WeatherStation extends ActionBarActivity implements
 	@Override
 	public void onClick(View v) {
 		if (BuildConfig.DEBUG) Log.d(LOG_TAG, "OnClick id = " + v.getId());
+		final ScrollView vDrawer = (ScrollView) this.findViewById(R.id.v_drawer);
 		switch (v.getId()) {
+			case R.id.thermometer:
+				if (gvBig != gvThermo) {
+					Utils.reOrderGauge(this, R.id.tvCurrPressView2, R.id.thermometer,
+							gvThermo, gvBaro, gvHygro,
+							tvCurrTempView2, tvCurrPressView2, tvCurrHumidView2);
+					gvBig = gvThermo;
+				}
+				break;
+			case R.id.barometer:
+				if (gvBig != gvBaro) {
+					Utils.reOrderGauge(this, R.id.tvCurrTempView2, R.id.barometer,
+							gvBaro, gvThermo, gvHygro,
+							tvCurrPressView2, tvCurrTempView2, tvCurrHumidView2);
+					gvBig = gvBaro;
+				}
+				break;
+			case R.id.hygrometer:
+				if (gvBig != gvHygro) {
+					Utils.reOrderGauge(this, R.id.tvCurrPressView2, R.id.hygrometer,
+							gvHygro, gvBaro, gvThermo,
+							tvCurrHumidView2, tvCurrPressView2, tvCurrTempView2);
+					gvBig = gvHygro;
+				}
+				break;
 			case R.id.b_tb_up:
 				if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Finish");
 				finish();
 				break;
 			case R.id.b_infinite:
-				if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Infinite");
+				if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Infinite view");
 				isContinuous = true;
 				plotValues = 20;
-                clearCharts();
-				initCharts(true, true, 1);
+                Utils.clearCharts();
+				Utils.initCharts(true, true, 1, this);
 				tempLevelsPlot.redraw();
 				pressLevelsPlot.redraw();
 				humidLevelsPlot.redraw();
@@ -413,8 +531,8 @@ public class WeatherStation extends ActionBarActivity implements
 				isContinuous = false;
 				plotValues = 24;
 				dayToShow = 1;
-                clearCharts();
-				initCharts(false, true, 1);
+				Utils.clearCharts();
+				Utils.initCharts(false, true, 1, this);
 				tempLevelsPlot.redraw();
 				pressLevelsPlot.redraw();
 				humidLevelsPlot.redraw();
@@ -427,8 +545,8 @@ public class WeatherStation extends ActionBarActivity implements
 				if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Month view");
 				isContinuous = false;
 				plotValues = 31;
-                clearCharts();
-				initCharts(false, false, 1);
+				Utils.clearCharts();
+				Utils.initCharts(false, false, 1, this);
 				tempLevelsPlot.redraw();
 				pressLevelsPlot.redraw();
 				humidLevelsPlot.redraw();
@@ -444,8 +562,8 @@ public class WeatherStation extends ActionBarActivity implements
 
 					isContinuous = false;
 					plotValues = 24;
-                    clearCharts();
-					initCharts(false, true, dayToShow);
+					Utils.clearCharts();
+					Utils.initCharts(false, true, dayToShow, this);
 					tempLevelsPlot.redraw();
 					pressLevelsPlot.redraw();
 					humidLevelsPlot.redraw();
@@ -467,8 +585,8 @@ public class WeatherStation extends ActionBarActivity implements
 
 					isContinuous = false;
 					plotValues = 24;
-                    clearCharts();
-					initCharts(false, true, dayToShow);
+					Utils.clearCharts();
+					Utils.initCharts(false, true, dayToShow, this);
 					tempLevelsPlot.redraw();
 					pressLevelsPlot.redraw();
 					humidLevelsPlot.redraw();
@@ -483,32 +601,33 @@ public class WeatherStation extends ActionBarActivity implements
 				}
 				break;
 			case R.id.sb_export:
-				if (!exportDatabase()) {
+				if (!WSDatabaseHelper.exportDatabase()) {
 					Utils.myAlert(this, getString(R.string.errorExportTitle), getString(R.string.errorExport));
 				} else {
 					Utils.myAlert(this, getString(R.string.succExportTitle), getString(R.string.succExport, exportFilePath));
 				}
-				findViewById(R.id.sb_temp).setVisibility(View.GONE);
-				findViewById(R.id.sb_pressure).setVisibility(View.GONE);
-				findViewById(R.id.sb_theme).setVisibility(View.GONE);
+				findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
+				findViewById(R.id.sb_info_group).setVisibility(View.GONE);
 				mDrawerLayout.closeDrawers();
 				break;
 			case R.id.sb_backup:
-				if (!backupDBasJSON()) {
+				if (!WSDatabaseHelper.backupDBasJSON()) {
 					Utils.myAlert(this, getString(R.string.errorBackupTitle), getString(R.string.errorBackup));
 				} else {
 					Utils.myAlert(this, getString(R.string.succBackupTitle), getString(R.string.succBackup, exportFilePath));
 				}
-				findViewById(R.id.sb_temp).setVisibility(View.GONE);
-				findViewById(R.id.sb_pressure).setVisibility(View.GONE);
-				findViewById(R.id.sb_theme).setVisibility(View.GONE);
+				findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
+				findViewById(R.id.sb_info_group).setVisibility(View.GONE);
 				mDrawerLayout.closeDrawers();
 				break;
 			case R.id.sb_restore:
-                restoreFileDialog();
-				findViewById(R.id.sb_temp).setVisibility(View.GONE);
-				findViewById(R.id.sb_pressure).setVisibility(View.GONE);
-				findViewById(R.id.sb_theme).setVisibility(View.GONE);
+				/** List view to add onItemClickListener */
+				ListView lvFileList = Utils.restoreFileDialog();
+				if (lvFileList != null) {
+					lvFileList.setOnItemClickListener(this);
+				}
+				findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
+				findViewById(R.id.sb_info_group).setVisibility(View.GONE);
 				mDrawerLayout.closeDrawers();
 				break;
 			case R.id.sb_clear:
@@ -544,15 +663,53 @@ public class WeatherStation extends ActionBarActivity implements
 				AlertDialog alertDialog = alertDialogBuilder.create();
 				// show it
 				alertDialog.show();
-				findViewById(R.id.sb_temp).setVisibility(View.GONE);
-				findViewById(R.id.sb_pressure).setVisibility(View.GONE);
-				findViewById(R.id.sb_theme).setVisibility(View.GONE);
+				findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
+				findViewById(R.id.sb_info_group).setVisibility(View.GONE);
 				mDrawerLayout.closeDrawers();
 				break;
+			case R.id.sb_info:
+				findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
+				findViewById(R.id.sb_info_group).setVisibility(View.VISIBLE);
+				vDrawer.post(new Runnable() {
+					@Override
+					public void run() {
+						vDrawer.fullScroll(ScrollView.FOCUS_UP);
+					}
+				});
+				break;
+			case R.id.sb_info_temp:
+				if (mTempSensor != null) {
+					Utils.sensorInfoDialog(0);
+				} else {
+					Utils.myAlert(appContext, getString(R.string.tvSensorTypeTemp),
+							getString(R.string.sensorNotAvail));
+				}
+				break;
+			case R.id.sb_info_pressure:
+				if (mPressSensor != null) {
+					Utils.sensorInfoDialog(1);
+				} else {
+					Utils.myAlert(appContext, getString(R.string.tvSensorTypePressure),
+							getString(R.string.sensorNotAvail));
+				}
+				break;
+			case R.id.sb_info_humidity:
+				if (mHumidSensor != null) {
+					Utils.sensorInfoDialog(2);
+				} else {
+					Utils.myAlert(appContext, getString(R.string.tvSensorTypeHumidity),
+							getString(R.string.sensorNotAvail));
+				}
+				break;
 			case R.id.sb_settings:
-				findViewById(R.id.sb_temp).setVisibility(View.VISIBLE);
-				findViewById(R.id.sb_pressure).setVisibility(View.VISIBLE);
-				findViewById(R.id.sb_theme).setVisibility(View.VISIBLE);
+				findViewById(R.id.sb_settings_group).setVisibility(View.VISIBLE);
+				findViewById(R.id.sb_info_group).setVisibility(View.GONE);
+				vDrawer.post(new Runnable() {
+					@Override
+					public void run() {
+						vDrawer.fullScroll(ScrollView.FOCUS_DOWN);
+					}
+				});
 				break;
 			case R.id.sb_temp:
 				/** Builder for theme selection dialog */
@@ -571,12 +728,10 @@ public class WeatherStation extends ActionBarActivity implements
 							public void onClick(DialogInterface dialog, int which) {
 								mPrefs.edit().putInt("temp_unit", selectTempUnit).apply();
 								tempUnit = selectTempUnit;
-								findViewById(R.id.sb_temp).setVisibility(View.GONE);
-								findViewById(R.id.sb_pressure).setVisibility(View.GONE);
-								findViewById(R.id.sb_theme).setVisibility(View.GONE);
+								findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
 								mDrawerLayout.closeDrawers();
-								clearCharts();
-								initCharts(true, true, 1); // continuous, day view, view today
+								Utils.clearCharts();
+								Utils.initCharts(true, true, 1, appActivity); // continuous, day view, view today
 								dialog.dismiss();
 							}
 						});
@@ -584,9 +739,7 @@ public class WeatherStation extends ActionBarActivity implements
 				selTempUnit.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.cancel),
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
-								findViewById(R.id.sb_temp).setVisibility(View.GONE);
-								findViewById(R.id.sb_pressure).setVisibility(View.GONE);
-								findViewById(R.id.sb_theme).setVisibility(View.GONE);
+								findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
 								mDrawerLayout.closeDrawers();
 								dialog.dismiss();
 							}
@@ -648,12 +801,10 @@ public class WeatherStation extends ActionBarActivity implements
 							public void onClick(DialogInterface dialog, int which) {
 								mPrefs.edit().putInt("press_unit", selectPressUnit).apply();
 								pressUnit = selectPressUnit;
-								findViewById(R.id.sb_temp).setVisibility(View.GONE);
-								findViewById(R.id.sb_pressure).setVisibility(View.GONE);
-								findViewById(R.id.sb_theme).setVisibility(View.GONE);
+								findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
 								mDrawerLayout.closeDrawers();
-								clearCharts();
-								initCharts(true, true, 1); // continuous, day view, view today
+								Utils.clearCharts();
+								Utils.initCharts(true, true, 1, appActivity); // continuous, day view, view today
 								dialog.dismiss();
 							}
 						});
@@ -661,9 +812,7 @@ public class WeatherStation extends ActionBarActivity implements
 				selPressUnit.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.cancel),
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
-								findViewById(R.id.sb_temp).setVisibility(View.GONE);
-								findViewById(R.id.sb_pressure).setVisibility(View.GONE);
-								findViewById(R.id.sb_theme).setVisibility(View.GONE);
+								findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
 								mDrawerLayout.closeDrawers();
 								dialog.dismiss();
 							}
@@ -770,6 +919,96 @@ public class WeatherStation extends ActionBarActivity implements
 				}
 				mDrawerLayout.closeDrawers();
 				break;
+			case R.id.sb_update:
+				/** Builder for update rates selection dialog */
+				AlertDialog.Builder selUpdateBuilder = new AlertDialog.Builder(this);
+				/** Inflater for update rates selection dialog */
+				LayoutInflater selUpdateInflater = getLayoutInflater();
+				/** View for update rates selection dialog */
+				View selUpdateView = selUpdateInflater.inflate(R.layout.screen_update_rate, null);
+				selUpdateBuilder.setView(selUpdateView);
+				/** Pointer to update rates selection dialog */
+				AlertDialog selUpdate = selUpdateBuilder.create();
+				selUpdate.setTitle(getString(R.string.sbScreenUpdate));
+
+				selUpdate.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.ok),
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								int[] intUpdateRate = getResources().getIntArray(R.array.intUpdateRate);
+								mPrefs.edit().putInt("UpdateRate", autoUpdateIndex).apply();
+								autoUpdate = intUpdateRate[autoUpdateIndex];
+								findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
+								dialog.dismiss();
+							}
+						});
+
+				selUpdate.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.cancel),
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
+								dialog.dismiss();
+							}
+						});
+
+				selUpdate.show();
+
+				// Initialize the NumberPicker with selectable update rates
+				NumberPicker.OnValueChangeListener onIntervalChanged
+						= new NumberPicker.OnValueChangeListener() {
+					@Override
+					public void onValueChange(
+							NumberPicker picker,
+							int oldVal,
+							int newVal) {
+						autoUpdateIndex = newVal;
+					}
+				};
+
+				// Get list with available update rates
+				/** Array of available update rates */
+				String[] updateRateArray = getResources().getStringArray(R.array.updateRate);
+				/** pointer to NumberPicker for update rates list */
+				NumberPicker np_update =
+						(NumberPicker) selUpdateView.findViewById(R.id.np_update);
+				np_update.setSaveFromParentEnabled(false);
+				np_update.setSaveEnabled(true);
+				np_update.setMaxValue(updateRateArray.length - 1);
+				np_update.setMinValue(0);
+				np_update.setDisplayedValues(updateRateArray);
+				np_update.setOnValueChangedListener(onIntervalChanged);
+				np_update.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+				autoUpdateIndex = 0;
+				autoUpdateIndex = mPrefs.getInt("UpdateRate", autoUpdateIndex);
+				np_update.setValue(autoUpdateIndex);
+				break;
+			case R.id.sb_vintage:
+				/** Layout for modern view */
+				LinearLayout modernLayout = (LinearLayout)findViewById(R.id.modern);
+				/** Layout for vintage view */
+				RelativeLayout vintageLayout = (RelativeLayout)findViewById(R.id.vintage);
+				switch (uiLayout) {
+					case 0:
+						modernLayout.setVisibility(View.GONE);
+						vintageLayout.setVisibility(View.VISIBLE);
+						findViewById(R.id.b_infinite).setVisibility(View.GONE);
+						findViewById(R.id.b_day_view).setVisibility(View.GONE);
+						findViewById(R.id.b_month_view).setVisibility(View.GONE);
+						uiLayout = 1;
+						mDrawerLayout.closeDrawers();
+						// TODO
+						break;
+					case 1:
+						vintageLayout.setVisibility(View.GONE);
+						modernLayout.setVisibility(View.VISIBLE);
+						findViewById(R.id.b_infinite).setVisibility(View.VISIBLE);
+						findViewById(R.id.b_day_view).setVisibility(View.VISIBLE);
+						findViewById(R.id.b_month_view).setVisibility(View.VISIBLE);
+						uiLayout = 0;
+						mDrawerLayout.closeDrawers();
+						break;
+				}
+				mPrefs.edit().putInt("UI_Layout", uiLayout).apply();
+				break;
 			case R.id.sb_theme:
                 /** Builder for theme selection dialog */
                 AlertDialog.Builder selThemeBuilder = new AlertDialog.Builder(this);
@@ -786,9 +1025,7 @@ public class WeatherStation extends ActionBarActivity implements
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 mPrefs.edit().putInt("dark_theme", selectColor).apply();
-	                            findViewById(R.id.sb_temp).setVisibility(View.GONE);
-	                            findViewById(R.id.sb_pressure).setVisibility(View.GONE);
-	                            findViewById(R.id.sb_theme).setVisibility(View.GONE);
+	                            findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
                                 dialog.dismiss();
                                 finish();
                                 /** Intent to restart this app */
@@ -800,9 +1037,7 @@ public class WeatherStation extends ActionBarActivity implements
                 selTheme.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.cancel),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-	                            findViewById(R.id.sb_temp).setVisibility(View.GONE);
-	                            findViewById(R.id.sb_pressure).setVisibility(View.GONE);
-	                            findViewById(R.id.sb_theme).setVisibility(View.GONE);
+	                            findViewById(R.id.sb_settings_group).setVisibility(View.GONE);
                                 dialog.dismiss();
                             }
                         });
@@ -908,1245 +1143,176 @@ public class WeatherStation extends ActionBarActivity implements
 		if (BuildConfig.DEBUG) Log.d(LOG_TAG, "onSensorChanged "+event.sensor.getName()+
 				" "+event.sensor.getType());
 
-		/** Integer array for return values */
-		int[] currTime = getCurrentDate();
-		if (BuildConfig.DEBUG) Log.d(LOG_TAG, "event timestamp "+currTime[0]+"h "
-				+" on "+currTime[1]+" of month "+currTime[2]);
+		/** String for tendency */
+		String tendency = getString(R.string.straightTendency);
 
 		switch (event.sensor.getType()) {
 			case Sensor.TYPE_AMBIENT_TEMPERATURE:
-				/** Current temperature converted to user selected unit */
-				float currTemp = Utils.cToU(event.values[0], tempUnit);
-				tvCurrTempView.setText(String.format("%.01f",
-						currTemp) + Utils.tempUnit(appContext, tempUnit));
-				if (isContinuous) {
-					if (tempLevelsSeries.size() < 2) {
-						tempLevelsSeries.addLast(null,(Math.round(currTemp * 10000.0f) / 10000.0f)+0.1f);
-						tempLevelsSeries.addLast(null,(Math.round(currTemp * 10000.0f) / 10000.0f)-0.1f);
-					}
-					tempLevelsSeries.addLast(null, Math.round(currTemp * 10000.0f) / 10000.0f);
-
-					if (tempLevelsSeries.size() > plotValues) {
-						tempLevelsSeries.removeFirst();
-					}
-
-					/** Min and Max values to calculate new top and bottom range values of temperature plot */
-					float[] minMax = Utils.getMinMax(0);
-					minTempValue = minMax[0];
-					maxTempValue = minMax[1];
-					tempLevelsPlot.setRangeBottomMax(minTempValue-0.1);
-					tempLevelsPlot.setRangeBottomMin(minTempValue - 0.1);
-					tempLevelsPlot.setRangeTopMax(maxTempValue + 0.1);
-					tempLevelsPlot.setRangeTopMin(maxTempValue + 0.1);
-					tempLevelsPlot.redraw();
-				}
+				lastTempValue = Utils.cToU(event.values[0], tempUnit);
+				gvThermo.setTargetValue(Utils.cToU(event.values[0], 1));
 				break;
 			case Sensor.TYPE_PRESSURE:
-				/** Current pressure converted to user selected unit */
-				float currPress = Utils.pToU(event.values[0], pressUnit);
-				/** Padding for top and bottom of the plot depending on user selected unit */
-				float plotPadding = Utils.pressBoundary(pressUnit);
-				tvCurrPressView.setText(String.format(Utils.pressFormatTitle(pressUnit),
-						currPress) + Utils.pressUnit(appContext, pressUnit));
-				if (isContinuous) {
-					if (pressLevelsSeries.size() < 2) {
-						pressLevelsSeries.addLast(null,(Math.round(currPress * 10000.0f) / 10000.0f)+plotPadding);
-						pressLevelsSeries.addLast(null,(Math.round(currPress * 10000.0f) / 10000.0f)-plotPadding);
-					}
-					pressLevelsSeries.addLast(null, Math.round(currPress * 10000.0f) / 10000.0f);
-
-					if (pressLevelsSeries.size() > plotValues) {
-						pressLevelsSeries.removeFirst();
-					}
-
-					/** Min and Max values to calculate new top and bottom range values of pressure plot */
-					float[] minMax = Utils.getMinMax(1);
-					minPressValue = minMax[0];
-					maxPressValue = minMax[1];
-					pressLevelsPlot.setRangeBottomMax(minPressValue - plotPadding);
-					pressLevelsPlot.setRangeBottomMin(minPressValue - plotPadding);
-					pressLevelsPlot.setRangeTopMax(maxPressValue + plotPadding);
-					pressLevelsPlot.setRangeTopMin(maxPressValue + plotPadding);
-					pressLevelsPlot.redraw();
-				}
+				lastPressValue = Utils.pToU(event.values[0], pressUnit);
+				lastPressValue2 = Utils.pToU(event.values[0], 0);
 				break;
 			case Sensor.TYPE_RELATIVE_HUMIDITY:
-				tvCurrHumidView.setText(String.format("%.01f",
-						event.values[0]) + getString(R.string.humidSign));
-				if (isContinuous) {
-					if (humidLevelsSeries.size() < 2) {
-						humidLevelsSeries.addLast(null,(Math.round(event.values[0] * 10000.0f) / 10000.0f)+0.1f);
-						humidLevelsSeries.addLast(null,(Math.round(event.values[0] * 10000.0f) / 10000.0f)-0.1f);
-					}
-					humidLevelsSeries.addLast(null, Math.round(event.values[0] * 10000.0f) / 10000.0f);
-
-					if (humidLevelsSeries.size() > plotValues) {
-						humidLevelsSeries.removeFirst();
-					}
-
-					/** Min and Max values to calculate new top and bottom range values of humidity plot */
-					float[] minMax = Utils.getMinMax(2);
-					minHumidValue = minMax[0];
-					maxHumidValue = minMax[1];
-					humidLevelsPlot.setRangeBottomMax(minHumidValue - 0.1);
-					humidLevelsPlot.setRangeBottomMin(minHumidValue - 0.1);
-					humidLevelsPlot.setRangeTopMax(maxHumidValue + 0.1);
-					humidLevelsPlot.setRangeTopMin(maxHumidValue + 0.1);
-					humidLevelsPlot.redraw();
-				}
+				lastHumidValue = event.values[0];
+				gvBaro.setTargetValue(lastPressValue2);
+				gvHygro.setTargetValue(lastHumidValue);
 				break;
 		}
-	}
+		if (lastTempValue != -9999 && lastPressValue != -9999 && lastHumidValue != -9999 && isUpdateRequest)
+		{
+			// update temperature plot
+			if (BuildConfig.DEBUG) Log.d(LOG_TAG, "plotRefresh finished - temp = "+lastTempValue);
+			/** Measured temperature as string */
+			String sCurrTemp = Float.toString(Math.round(lastTempValue * 10.0f) / 10.0f);
+			/** Stored last measured temperature as string */
+			String sLastTemp = Float.toString(Math.round(lastTemp * 10.0f) / 10.0f);
+			if (lastTempValue > lastTemp) {
+				tendency = getString(R.string.upTendency);
+			} else if (lastTempValue < lastTemp) {
+				tendency = getString(R.string.downTendency);
+			}
+			if (sCurrTemp.equalsIgnoreCase(sLastTemp)) {
+				tendency = getString(R.string.straightTendency);
+			}
+			lastTemp = lastTempValue;
+			tvCurrTempView.setText(String.format("%.01f",
+					lastTempValue) + Utils.tempUnit(appContext, tempUnit)+tendency);
+			tvCurrTempView2.setText(String.format("%.01f",
+					lastTempValue) + Utils.tempUnit(appContext, tempUnit)+tendency);
+			if (isContinuous) {
+				if (tempLevelsSeries.size() < 2) {
+					tempLevelsSeries.addLast(null,(Math.round(lastTempValue * 10000.0f) / 10000.0f)+0.1f);
+					tempLevelsSeries.addLast(null,(Math.round(lastTempValue * 10000.0f) / 10000.0f)-0.1f);
+				}
+				tempLevelsSeries.addLast(null, Math.round(lastTempValue * 10000.0f) / 10000.0f);
 
-	/**
-	 * Initialize charts for hourly view
-	 *
-	 * @param isContinuous
-	 *            true -> use .useImplicitXVals(); for X values
-	 *            false -> X values
-	 * @param isDay
-	 *            true -> get hourly records
-	 *            false -> get daily records
-	 * @param day
-	 *            day we want to get the records from
-	 *            1 = today
-	 *            2 = yesterday
-	 *            3 = 2 days ago
-	 *            ...
-	 */
-	private void initCharts(boolean isContinuous, boolean isDay, int day){
-
-		/** String with the X axis name */
-		String xValueLabel = getString(R.string.currCont);
-		/** List to hold the timestamps */
-		ArrayList<Integer> timeStamps = new ArrayList<>();
-		/** List to hold the day stamps */
-		ArrayList<Integer> dayStamps = new ArrayList<>();
-		/** List to hold the max temperature values */
-		ArrayList<Float> tempMaxEntries = new ArrayList<>();
-		/** List to hold the min temperature values */
-		ArrayList<Float> tempMinEntries = new ArrayList<>();
-        tempMinEntries.clear();
-		/** List to hold the (average) temperature values */
-		ArrayList<Float> tempEntries = new ArrayList<>();
-		/** List to hold the max pressure values */
-		ArrayList<Float> pressMaxEntries = new ArrayList<>();
-		/** List to hold the min pressure values */
-		ArrayList<Float> pressMinEntries = new ArrayList<>();
-		/** List to hold the (average) pressure values */
-		ArrayList<Float> pressEntries = new ArrayList<>();
-		/** List to hold the max humidity values */
-		ArrayList<Float> humidMaxEntries = new ArrayList<>();
-		/** List to hold the min humidity values */
-		ArrayList<Float> humidMinEntries = new ArrayList<>();
-		/** List to hold the (average) humidity values */
-		ArrayList<Float> humidEntries = new ArrayList<>();
-
-		if(!isContinuous) {
-
-			/** Instance of weather db helper */
-			wsDbHelper = new WSDatabaseHelper(this);
-			dataBase = wsDbHelper.getReadableDatabase();
-			if (isDay) {
-				xValueLabel = getString(R.string.currHour);
-				/** Cursor filled with existing entries of today */
-				Cursor dayEntry = wsDbHelper.getDay(dataBase, day);
-				dayEntry.moveToFirst();
-
-				for (int i = 0; i<dayEntry.getCount(); i++) {
-					timeStamps.add(dayEntry.getInt(0));
-					dayStamps.add(dayEntry.getInt(1));
-					tempEntries.add(Utils.cToU(dayEntry.getFloat(3), tempUnit));
-					pressEntries.add(Utils.pToU(dayEntry.getFloat(4), pressUnit));
-					humidEntries.add(dayEntry.getFloat(5));
-					dayEntry.moveToNext();
+				if (tempLevelsSeries.size() > plotValues) {
+					tempLevelsSeries.removeFirst();
 				}
 
-				numOfDayRecords = 0;
-				for (int i=1; i<32; i++) {
-					/** Cursor filled with existing entries of today */
-					dayEntry = wsDbHelper.getDay(dataBase, i);
-					dayEntry.moveToFirst();
-					if (dayEntry.getCount() == 0) {
-						break;
+				/** Min and Max values to calculate new top and bottom range values of temperature plot */
+				float[] minMax = Utils.getMinMax(0);
+				minTempValue = minMax[0];
+				maxTempValue = minMax[1];
+				tempLevelsPlot.setRangeBottomMax(minTempValue-0.1);
+				tempLevelsPlot.setRangeBottomMin(minTempValue - 0.1);
+				tempLevelsPlot.setRangeTopMax(maxTempValue + 0.1);
+				tempLevelsPlot.setRangeTopMin(maxTempValue + 0.1);
+				tempLevelsPlot.redraw();
+			}
+
+			// update pressure plot
+			if (BuildConfig.DEBUG) Log.d(LOG_TAG, "plotRefresh finished - pressure = "+lastPressValue);
+			if (lastPressValue > lastPress) {
+				tendency = getString(R.string.upTendency);
+			} else if (lastPressValue < lastPress) {
+				tendency = getString(R.string.downTendency);
+			}
+			lastPress = lastPressValue;
+			/** Padding for top and bottom of the plot depending on user selected unit */
+			float plotPadding = Utils.pressBoundary(pressUnit);
+			tvCurrPressView.setText(String.format(Utils.pressFormatTitle(pressUnit),
+					lastPressValue) + Utils.pressUnit(appContext, pressUnit)+tendency);
+			tvCurrPressView2.setText(String.format(Utils.pressFormatTitle(pressUnit),
+					lastPressValue) + Utils.pressUnit(appContext, pressUnit)+tendency);
+			if (isContinuous) {
+				if (pressLevelsSeries.size() < 2) {
+					pressLevelsSeries.addLast(null,(Math.round(lastPressValue * 10000.0f) / 10000.0f)+plotPadding);
+					pressLevelsSeries.addLast(null,(Math.round(lastPressValue * 10000.0f) / 10000.0f)-plotPadding);
+				}
+				pressLevelsSeries.addLast(null, Math.round(lastPressValue * 10000.0f) / 10000.0f);
+
+				if (pressLevelsSeries.size() > plotValues) {
+					pressLevelsSeries.removeFirst();
+				}
+
+				/** Min and Max values to calculate new top and bottom range values of pressure plot */
+				float[] minMax = Utils.getMinMax(1);
+				minPressValue = minMax[0];
+				maxPressValue = minMax[1];
+				pressLevelsPlot.setRangeBottomMax(minPressValue - plotPadding);
+				pressLevelsPlot.setRangeBottomMin(minPressValue - plotPadding);
+				pressLevelsPlot.setRangeTopMax(maxPressValue + plotPadding);
+				pressLevelsPlot.setRangeTopMin(maxPressValue + plotPadding);
+				pressLevelsPlot.redraw();
+			}
+
+			// update humidity plot
+			if (BuildConfig.DEBUG) Log.d(LOG_TAG, "plotRefresh finished - humid = "+lastHumidValue);
+			/** Measured humidity as string */
+			String sCurrHumid = Float.toString(Math.round(lastHumidValue * 10.0f) / 10.0f);
+			/** Stored last measured humidity as string */
+			String sLastHumid = Float.toString(Math.round(lastHumid * 10.0f) / 10.0f);
+			if (lastHumidValue > lastHumid) {
+				tendency = getString(R.string.upTendency);
+			} else {
+				tendency = getString(R.string.downTendency);
+			}
+			if (sCurrHumid.equalsIgnoreCase(sLastHumid)) {
+				tendency = getString(R.string.straightTendency);
+			}
+			lastHumid = lastHumidValue;
+			tvCurrHumidView.setText(String.format("%.01f",
+					lastHumidValue) + getString(R.string.humidSign)+tendency);
+			tvCurrHumidView2.setText(String.format("%.01f",
+					lastHumidValue) + getString(R.string.humidSign)+tendency);
+			if (isContinuous) {
+				if (humidLevelsSeries.size() < 2) {
+					humidLevelsSeries.addLast(null,(Math.round(lastHumidValue * 10000.0f) / 10000.0f)+0.1f);
+					humidLevelsSeries.addLast(null,(Math.round(lastHumidValue * 10000.0f) / 10000.0f)-0.1f);
+				}
+				humidLevelsSeries.addLast(null, Math.round(lastHumidValue * 10000.0f) / 10000.0f);
+
+				if (humidLevelsSeries.size() > plotValues) {
+					humidLevelsSeries.removeFirst();
+				}
+
+				/** Min and Max values to calculate new top and bottom range values of humidity plot */
+				float[] minMax = Utils.getMinMax(2);
+				minHumidValue = minMax[0];
+				maxHumidValue = minMax[1];
+				humidLevelsPlot.setRangeBottomMax(minHumidValue - 0.1);
+				humidLevelsPlot.setRangeBottomMin(minHumidValue - 0.1);
+				humidLevelsPlot.setRangeTopMax(maxHumidValue + 0.1);
+				humidLevelsPlot.setRangeTopMin(maxHumidValue + 0.1);
+				humidLevelsPlot.redraw();
+			}
+
+			// reset measured values for next sampling round
+			lastTempValue = lastPressValue = lastHumidValue = -9999;
+
+			if (autoUpdate != 1000) {
+				// reset update request flag
+				isUpdateRequest = false;
+
+				/** Handler to update UI with an delay of <code>autoUpdate</code> seconds */
+				final Handler handler = new Handler();
+				handler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						runOnUiThread(new Runnable() {
+							public void run() {
+								plotRefresh();
+							}
+						});
 					}
-					numOfDayRecords++;
-				}
-				dayEntry.close();
-
-			} else {
-				xValueLabel = getString(R.string.currMonth);
-
-				numOfDayRecords = 0;
-				for (int i=1; i<32; i++) {
-					/** Cursor filled with existing entries of today */
-					Cursor dayEntry = wsDbHelper.getDay(dataBase, i);
-					dayEntry.moveToFirst();
-					if (dayEntry.getCount() == 0) {
-						break;
-					}
-					numOfDayRecords++;
-					dayEntry.moveToLast();
-					timeStamps.add(dayEntry.getInt(0));
-					dayStamps.add(dayEntry.getInt(1));
-					tempMaxEntries.add(Utils.cToU(dayEntry.getFloat(6), tempUnit));
-					tempMinEntries.add(Utils.cToU(dayEntry.getFloat(7), tempUnit));
-					tempEntries.add(Utils.cToU(dayEntry.getFloat(8), tempUnit));
-					pressMaxEntries.add(Utils.pToU(dayEntry.getFloat(9), pressUnit));
-					pressMinEntries.add(Utils.pToU(dayEntry.getFloat(10), pressUnit));
-					pressEntries.add(Utils.pToU(dayEntry.getFloat(11), pressUnit));
-					humidMaxEntries.add(dayEntry.getFloat(12));
-					humidMinEntries.add(dayEntry.getFloat(13));
-					humidEntries.add(dayEntry.getFloat(14));
-					dayEntry.close();
-				}
+				}, autoUpdate);
 			}
-			dataBase.close();
-			wsDbHelper.close();
-		}
-
-		// initialize chart for temperature for non-continuous update
-		if (mTempSensor != null) {
-			initTempChart(isContinuous, isDay, xValueLabel,
-                    timeStamps, dayStamps,
-                    tempEntries, tempMaxEntries, tempMinEntries);
-		}
-
-		// initialize chart for pressure for non-continuous update
-		if (mPressSensor != null) {
-			initPressChart(isContinuous, isDay, xValueLabel,
-                    timeStamps, dayStamps,
-                    pressEntries, pressMaxEntries, pressMinEntries);
-		}
-
-		// initialize chart for humidity for non-continuous update
-		if (mHumidSensor != null) {
-			initHumidChart(isContinuous, isDay, xValueLabel,
-                    timeStamps, dayStamps,
-                    humidEntries, humidMaxEntries, humidMinEntries);
-		}
-
-		// Activate the advertisements
-		// Enable access to internet
-		if (android.os.Build.VERSION.SDK_INT > 9) {
-			/** ThreadPolicy to get permission to access internet */
-			StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-			StrictMode.setThreadPolicy(policy);
-		}
-		/** View for Google Adsense ads */
-		AdView mAdView = (AdView) findViewById(R.id.adView);
-		/** Request for ad from Google */
-		AdRequest adRequest = new AdRequest.Builder().build();
-		mAdView.loadAd(adRequest);
-	}
-
-    /**
-     * Clear all charts
-     */
-    private void clearCharts() {
-        if (mTempSensor != null) {
-            clearTempChart();
-        }
-        if (mPressSensor != null) {
-            clearPressChart();
-        }
-        if (mHumidSensor != null) {
-            clearHumidChart();
-        }
-    }
-
-	/**
-	 * Initialize temperature chart
-	 *
-	 * @param isContinuous
-	 *            true -> use .useImplicitXVals(); for X values
-	 *            false -> X values
-	 * @param isDay
-	 *            true -> get hourly records
-	 *            false -> get daily records
-	 * @param xValueTitle
-	 *            title for X values as string
-	 * @param timeStamps
-	 *            list with time stamps of existing records
-	 * @param dayStamps
-	 *            list with day stamps of existing records if day view
-	 * @param tempEntries
-	 *            list with temperatures of existing records if day view
-	 *            list with average temperatures if month view
-	 * @param tempMaxEntries
-	 *            unused if day view
-	 *            list with max temperatures if month view
-	 * @param tempMinEntries
-	 *            unused if day view
-	 *            list with min temperatures if month view
-	 */
-	private void initTempChart(boolean isContinuous, boolean isDay, String xValueTitle,
-	                           ArrayList<Integer> timeStamps,
-	                           ArrayList<Integer> dayStamps,
-	                           ArrayList<Float> tempEntries,
-	                           ArrayList<Float> tempMaxEntries,
-	                           ArrayList<Float> tempMinEntries) {
-		// find the temperature levels plot in the layout
-		tempLevelsPlot = (XYPlot) findViewById(R.id.xyTempPlot);
-		// setup and format temperature data series
-		tempLevelsSeries = new SimpleXYSeries(getString(R.string.currTemp));
-
-		minTempValue = -100f;
-		maxTempValue = +100f;
-
-		if (!isContinuous && tempEntries.size() != 0) {
-			if (isDay) {
-				minTempValue = Collections.min(tempEntries);
-				maxTempValue = Collections.max(tempEntries);
-			} else {
-				minTempValue = Collections.min(tempMinEntries);
-				maxTempValue = Collections.max(tempMaxEntries);
-			}
-		}
-		tempLevelsPlot.setRangeBottomMax(minTempValue - 0.1);
-		tempLevelsPlot.setRangeBottomMin(minTempValue - 0.1);
-		tempLevelsPlot.setRangeTopMax(maxTempValue + 0.1);
-		tempLevelsPlot.setRangeTopMin(maxTempValue + 0.1);
-
-		/** Formatter for (average or current) temperature plot */
-		LineAndPointFormatter tempSeriesFormatter;
-		/** Formatter for max temperature plot */
-		LineAndPointFormatter tempMaxSeriesFormatter;
-		/** Formatter for min temperature plot */
-		LineAndPointFormatter tempMinSeriesFormatter;
-
-		if (isContinuous) {
-			tempLevelsSeries.useImplicitXVals();
-			tempSeriesFormatter = new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null);
-			tempSeriesFormatter.getLinePaint().setStrokeWidth(10);
-			tempLevelsPlot.addSeries(tempLevelsSeries, tempSeriesFormatter);
-		} else {
-			if (isDay) {
-				if (dayStamps.size() == 0) {
-					xValueTitle = xValueTitle +" "+ getString(R.string.noData);
-				} else {
-					xValueTitle = xValueTitle +" "+ getString(R.string.hourOfDay) +" "+ Integer.toString(dayStamps.get(0));
-					for (int i=0; i<timeStamps.size(); i++) {
-						tempLevelsSeries.addLast(timeStamps.get(i),tempEntries.get(i));
-					}
-				}
-				tempSeriesFormatter = new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null);
-				tempSeriesFormatter.getLinePaint().setStrokeWidth(10);
-				tempLevelsPlot.addSeries(tempLevelsSeries, tempSeriesFormatter);
-			} else {
-				if (tempEntries.size() == 0) {
-					xValueTitle = xValueTitle +" "+ getString(R.string.noData);
-				} else {
-					for (int i=0; i<dayStamps.size(); i++) {
-						tempLevelsSeries.addLast(dayStamps.get(i),tempEntries.get(i));
-					}
-				}
-				/* Data series for the max temperature */
-				SimpleXYSeries tempMaxSeries = new SimpleXYSeries(getString(R.string.currTempMax));
-				/* Data series for the min temperature */
-                SimpleXYSeries tempMinSeries = new SimpleXYSeries(getString(R.string.currTempMin));
-				for (int i=0; i<timeStamps.size(); i++) {
-					tempMaxSeries.addLast(dayStamps.get(i), tempMaxEntries.get(i));
-					tempMinSeries.addLast(dayStamps.get(i), tempMinEntries.get(i));
-				}
-				tempSeriesFormatter = new LineAndPointFormatter(Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT, null);
-				tempSeriesFormatter.getLinePaint().setStrokeWidth(10);
-				tempLevelsPlot.addSeries(tempLevelsSeries, tempSeriesFormatter);
-				tempMaxSeriesFormatter = new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null);
-				tempMaxSeriesFormatter.getLinePaint().setStrokeWidth(10);
-				tempLevelsPlot.addSeries(tempMaxSeries, tempMaxSeriesFormatter);
-				tempMinSeriesFormatter = new LineAndPointFormatter(Color.GREEN, Color.TRANSPARENT, Color.TRANSPARENT, null);
-				tempMinSeriesFormatter.getLinePaint().setStrokeWidth(10);
-				tempLevelsPlot.addSeries(tempMinSeries, tempMinSeriesFormatter);
-			}
-		}
-
-		tempLevelsPlot.setDomainStepValue(plotValues);
-		tempLevelsPlot.setTicksPerRangeLabel(3);
-		tempLevelsPlot.getLayoutManager()
-				.remove(tempLevelsPlot.getLegendWidget());
-		tempLevelsPlot.getDomainLabelWidget().pack();
-		tempLevelsPlot.setDomainValueFormat(new DecimalFormat("#"));
-		tempLevelsPlot.getGraphWidget().setMarginBottom(margin30dp);
-		tempLevelsPlot.getGraphWidget().setMarginTop(margin10dp);
-		tempLevelsPlot.getGraphWidget().setMarginLeft(margin25dp);
-		tempLevelsPlot.getGraphWidget().setMarginRight(margin10dp);
-		tempLevelsPlot.getGraphWidget().getDomainLabelPaint().setTextSize(textSizeSmall);
-		tempLevelsPlot.getDomainLabelWidget().getLabelPaint().setTextSize(textSizeSmall);
-		tempLevelsPlot.getDomainLabelWidget().getLabelPaint().setTextSize(textSizeSmall);
-		tempLevelsPlot.getDomainLabelWidget().position(0, XLayoutStyle.ABSOLUTE_FROM_CENTER,
-				0, YLayoutStyle.RELATIVE_TO_BOTTOM, AnchorPosition.BOTTOM_MIDDLE);
-		tempLevelsPlot.setDomainLabel(xValueTitle);
-
-		tempLevelsPlot.getRangeLabelWidget().getLabelPaint().setTextSize(textSizeMedium);
-		tempLevelsPlot.getGraphWidget().getRangeLabelPaint().setTextSize(textSizeSmall);
-	    tempLevelsPlot.setRangeLabel(Utils.tempUnit(this, tempUnit));
-		tempLevelsPlot.getRangeLabelWidget().position(0.04f, XLayoutStyle.RELATIVE_TO_LEFT,
-				-0.1f, YLayoutStyle.RELATIVE_TO_BOTTOM,
-				AnchorPosition.LEFT_BOTTOM);
-		tempLevelsPlot.getRangeLabelWidget().setOrientation(TextOrientationType.HORIZONTAL);
-		tempLevelsPlot.getRangeLabelWidget().pack();
-
-		// Change border color
-		tempLevelsPlot.getBackgroundPaint().setColor(colorDark);
-		// Change grid background color
-		tempLevelsPlot.getGraphWidget().getGridBackgroundPaint().setColor(colorBright);
-		// Change grid color
-		tempLevelsPlot.getGraphWidget().getRangeGridLinePaint().setColor
-				(Color.TRANSPARENT);
-		tempLevelsPlot.getGraphWidget().getRangeSubGridLinePaint().setColor
-				(Color.TRANSPARENT);
-		tempLevelsPlot.getGraphWidget().getDomainGridLinePaint().setColor
-				(Color.TRANSPARENT);
-		tempLevelsPlot.getGraphWidget().getDomainSubGridLinePaint().setColor
-				(Color.TRANSPARENT);
-		// Change plot background color
-		tempLevelsPlot.getGraphWidget().getBackgroundPaint().setColor(colorDark);
-		// Change axis values text color and increment value
-		if (isContinuous) {
-			tempLevelsPlot.getGraphWidget().getDomainLabelPaint().setColor(Color.TRANSPARENT);
-		} else {
-			tempLevelsPlot.getGraphWidget().getDomainLabelPaint().setColor(Color.WHITE);
-			tempLevelsPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 2);
-		}
-		tempLevelsPlot.getGraphWidget().getRangeLabelPaint().setColor(Color.WHITE);
-
-		tempLevelsPlot.redraw();
-	}
-
-	/**
-	 * Clean up temperature chart for a new initialization
-	 */
-	private void clearTempChart() {
-		if (tempLevelsSeries.size() != 0) {
-			for (int i=0; i<=tempLevelsSeries.size(); i++) {
-				tempLevelsSeries.removeFirst();
-			}
-		}
-		tempLevelsPlot.removeSeries(tempLevelsSeries);
-		tempLevelsPlot.removeMarkers();
-		tempLevelsPlot.clear();
-	}
-
-	/**
-	 * Initialize pressure chart
-	 *
-	 * @param isContinuous
-	 *            true -> use .useImplicitXVals(); for X values
-	 *            false -> X values
-	 * @param isDay
-	 *            true -> get hourly records
-	 *            false -> get daily records
-	 * @param xValueTitle
-	 *            title for X values as string
-	 * @param timeStamps
-	 *            list with time stamps of existing records
-	 * @param dayStamps
-	 *            list with day stamps of existing records if day view
-	 * @param pressEntries
-	 *            list with pressures of existing records if day view
-	 *            list with average pressures if month view
-	 * @param pressMaxEntries
-	 *            unused if day view
-	 *            list with max pressures if month view
-	 * @param pressMinEntries
-	 *            unused if day view
-	 *            list with min pressures if month view
-	 */
-	private void initPressChart(boolean isContinuous, boolean isDay, String xValueTitle,
-	                            ArrayList<Integer> timeStamps,
-	                            ArrayList<Integer> dayStamps,
-	                            ArrayList<Float> pressEntries,
-	                            ArrayList<Float> pressMaxEntries,
-	                            ArrayList<Float> pressMinEntries) {
-		// find the pressure levels plot in the layout
-		pressLevelsPlot = (XYPlot) findViewById(R.id.xyPressPlot);
-		// setup and format pressure data series
-		pressLevelsSeries = new SimpleXYSeries(getString(R.string.currPress));
-
-		minPressValue = Utils.pToU(900f, pressUnit);
-		maxPressValue = Utils.pToU(1100f, pressUnit);
-		/** Padding for top and bottom of the plot depending on user selected unit */
-		float plotPadding = Utils.pressBoundary(pressUnit);
-
-		if (!isContinuous && pressEntries.size() != 0) {
-			if (isDay) {
-				minPressValue = Collections.min(pressEntries);
-				maxPressValue = Collections.max(pressEntries);
-			} else {
-				minPressValue = Collections.min(pressMinEntries);
-				maxPressValue = Collections.max(pressMaxEntries);
-			}
-		}
-		pressLevelsPlot.setRangeBottomMax(minPressValue - plotPadding);
-		pressLevelsPlot.setRangeBottomMin(minPressValue - plotPadding);
-		pressLevelsPlot.setRangeTopMax(maxPressValue + plotPadding);
-		pressLevelsPlot.setRangeTopMin(maxPressValue + plotPadding);
-
-		/** Formatter for (average) pressure plot */
-		LineAndPointFormatter pressSeriesFormatter;
-		/** Formatter for max pressure plot */
-		LineAndPointFormatter pressMaxSeriesFormatter;
-		/** Formatter for min pressure plot */
-		LineAndPointFormatter pressMinSeriesFormatter;
-
-		if (isContinuous) {
-			pressLevelsSeries.useImplicitXVals();
-			pressSeriesFormatter = new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null);
-			pressSeriesFormatter.getLinePaint().setStrokeWidth(10);
-			pressLevelsPlot.addSeries(pressLevelsSeries, pressSeriesFormatter);
-		} else {
-			if (isDay) {
-				if (dayStamps.size() == 0) {
-					xValueTitle = xValueTitle +" "+ getString(R.string.noData);
-				} else {
-					xValueTitle = xValueTitle +" "+ getString(R.string.hourOfDay) +" "+ Integer.toString(dayStamps.get(0));
-					for (int i=0; i<timeStamps.size(); i++) {
-						pressLevelsSeries.addLast(timeStamps.get(i),pressEntries.get(i));
-					}
-				}
-				pressSeriesFormatter = new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null);
-				pressSeriesFormatter.getLinePaint().setStrokeWidth(10);
-				pressLevelsPlot.addSeries(pressLevelsSeries, pressSeriesFormatter);
-			} else {
-				if (pressEntries.size() == 0) {
-					xValueTitle = xValueTitle +" "+ getString(R.string.noData);
-				} else {
-					for (int i=0; i<dayStamps.size(); i++) {
-						pressLevelsSeries.addLast(dayStamps.get(i),pressEntries.get(i));
-					}
-				}
-				/* Data series for the max barometric pressure */
-				SimpleXYSeries pressMaxSeries = new SimpleXYSeries(getString(R.string.currPressMax));
-				/* Data series for the min barometric pressure */
-                SimpleXYSeries pressMinSeries = new SimpleXYSeries(getString(R.string.currPressMin));
-				for (int i=0; i<timeStamps.size(); i++) {
-					pressMaxSeries.addLast(dayStamps.get(i), pressMaxEntries.get(i));
-					pressMinSeries.addLast(dayStamps.get(i), pressMinEntries.get(i));
-				}
-				pressSeriesFormatter = new LineAndPointFormatter(Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT, null);
-				pressSeriesFormatter.getLinePaint().setStrokeWidth(10);
-				pressLevelsPlot.addSeries(pressLevelsSeries, pressSeriesFormatter);
-				pressMaxSeriesFormatter = new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null);
-				pressMaxSeriesFormatter.getLinePaint().setStrokeWidth(10);
-				pressLevelsPlot.addSeries(pressMaxSeries, pressMaxSeriesFormatter);
-				pressMinSeriesFormatter = new LineAndPointFormatter(Color.GREEN, Color.TRANSPARENT, Color.TRANSPARENT, null);
-				pressMinSeriesFormatter.getLinePaint().setStrokeWidth(10);
-				pressLevelsPlot.addSeries(pressMinSeries, pressMinSeriesFormatter);
-			}
-		}
-
-		pressLevelsPlot.setDomainStepValue(plotValues);
-		pressLevelsPlot.setTicksPerRangeLabel(3);
-	    pressLevelsPlot.getLayoutManager()
-				.remove(pressLevelsPlot.getLegendWidget());
-		pressLevelsPlot.getDomainLabelWidget().pack();
-		if (isContinuous) {
-			pressLevelsPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 2);
-		} else {
-			if (pressLevelsSeries.size() < 16) {
-				pressLevelsPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 1);
-			} else {
-				pressLevelsPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 2);
-			}
-		}
-		pressLevelsPlot.setDomainValueFormat(new DecimalFormat("#"));
-		pressLevelsPlot.getGraphWidget().setMarginBottom(margin30dp);
-		pressLevelsPlot.getGraphWidget().setMarginTop(margin10dp);
-		pressLevelsPlot.getGraphWidget().setMarginLeft(margin40dp);
-		pressLevelsPlot.getGraphWidget().setMarginRight(margin10dp);
-		pressLevelsPlot.getGraphWidget().getDomainLabelPaint().setTextSize(textSizeSmall);
-		pressLevelsPlot.getDomainLabelWidget().getLabelPaint().setTextSize(textSizeSmall);
-		pressLevelsPlot.getDomainLabelWidget().getLabelPaint().setTextSize(textSizeSmall);
-	    pressLevelsPlot.getDomainLabelWidget().position(0, XLayoutStyle.ABSOLUTE_FROM_CENTER,
-			    0, YLayoutStyle.RELATIVE_TO_BOTTOM, AnchorPosition.BOTTOM_MIDDLE);
-		pressLevelsPlot.setDomainLabel(xValueTitle);
-
-	    pressLevelsPlot.getRangeLabelWidget().getLabelPaint().setTextSize(textSizeMedium);
-		pressLevelsPlot.getGraphWidget().getRangeLabelPaint().setTextSize(textSizeSmall);
-		pressLevelsPlot.setRangeLabel(Utils.pressUnit(this, pressUnit));
-
-		pressLevelsPlot.setRangeStepMode(XYStepMode.SUBDIVIDE);
-		DecimalFormat rangeFormat = new DecimalFormat(Utils.pressFormatRange(pressUnit));
-		rangeFormat.setMinimumFractionDigits(Utils.pressFormatRangeDigit(pressUnit));
-		pressLevelsPlot.setRangeValueFormat(rangeFormat);
-		pressLevelsPlot.getRangeLabelWidget().position(0.04f,XLayoutStyle.RELATIVE_TO_LEFT,
-				-0.15f,YLayoutStyle.RELATIVE_TO_BOTTOM,
-				AnchorPosition.LEFT_BOTTOM);
-		pressLevelsPlot.getRangeLabelWidget().setOrientation(TextOrientationType.HORIZONTAL);
-	    pressLevelsPlot.getRangeLabelWidget().pack();
-
-		// Change border color
-		pressLevelsPlot.getBackgroundPaint().setColor(colorDark);
-		// Change grid background color
-		pressLevelsPlot.getGraphWidget().getGridBackgroundPaint().setColor(colorBright);
-		// Change grid color
-		pressLevelsPlot.getGraphWidget().getRangeGridLinePaint().setColor
-				(Color.TRANSPARENT);
-		pressLevelsPlot.getGraphWidget().getRangeSubGridLinePaint().setColor
-				(Color.TRANSPARENT);
-		pressLevelsPlot.getGraphWidget().getDomainGridLinePaint().setColor
-				(Color.TRANSPARENT);
-		pressLevelsPlot.getGraphWidget().getDomainSubGridLinePaint().setColor
-				(Color.TRANSPARENT);
-		// Change plot background color
-		pressLevelsPlot.getGraphWidget().getBackgroundPaint().setColor(colorDark);
-		// Change axis values text color and increment value
-		if (isContinuous) {
-			pressLevelsPlot.getGraphWidget().getDomainLabelPaint().setColor(Color.TRANSPARENT);
-		} else {
-			pressLevelsPlot.getGraphWidget().getDomainLabelPaint().setColor(Color.WHITE);
-			pressLevelsPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 2);
-		}
-		pressLevelsPlot.getGraphWidget().getRangeLabelPaint().setColor(Color.WHITE);
-
-		pressLevelsPlot.redraw();
-	}
-
-	/**
-	 * Clean up pressure chart for a new initialization
-	 */
-	private void clearPressChart() {
-		if (pressLevelsSeries.size() != 0) {
-			for (int i=0; i<=pressLevelsSeries.size(); i++) {
-				pressLevelsSeries.removeFirst();
-			}
-		}
-		pressLevelsPlot.removeSeries(pressLevelsSeries);
-		pressLevelsPlot.removeMarkers();
-		pressLevelsPlot.clear();
-	}
-
-	/**
-	 * Initialize humidity chart
-	 *
-	 * @param isContinuous
-	 *            true -> use .useImplicitXVals(); for X values
-	 *            false -> X values
-	 * @param isDay
-	 *            true -> get hourly records
-	 *            false -> get daily records
-	 * @param xValueTitle
-	 *            title for X values as string
-	 * @param timeStamps
-	 *            list with time stamps of existing records
-	 * @param dayStamps
-	 *            list with day stamps of existing records if day view
-	 * @param humidEntries
-	 *            list with humidity of existing records if day view
-	 *            list with average humidity if month view
-	 * @param humidMaxEntries
-	 *            unused if day view
-	 *            list with max humidity if month view
-	 * @param humidMinEntries
-	 *            unused if day view
-	 *            list with min humidity if month view
-	 */
-	private void initHumidChart(boolean isContinuous, boolean isDay, String xValueTitle,
-	                            ArrayList<Integer> timeStamps,
-	                            ArrayList<Integer> dayStamps,
-	                            ArrayList<Float> humidEntries,
-	                            ArrayList<Float> humidMaxEntries,
-	                            ArrayList<Float> humidMinEntries) {
-		// find the humidity levels plot in the layout
-		humidLevelsPlot = (XYPlot) findViewById(R.id.xyHumidPlot);
-		// setup and format humidity data series
-		humidLevelsSeries = new SimpleXYSeries(getString(R.string.currHumid));
-
-		minHumidValue = -100f;
-		maxHumidValue = +100f;
-
-		if (!isContinuous && humidEntries.size() != 0) {
-			if (isDay) {
-				minHumidValue = Collections.min(humidEntries);
-				maxHumidValue = Collections.max(humidEntries);
-			} else {
-				minHumidValue = Collections.min(humidMinEntries);
-				maxHumidValue = Collections.max(humidMaxEntries);
-			}
-		}
-		humidLevelsPlot.setRangeBottomMax(minHumidValue - 0.1);
-		humidLevelsPlot.setRangeBottomMin(minHumidValue - 0.1);
-		humidLevelsPlot.setRangeTopMax(maxHumidValue + 0.1);
-		humidLevelsPlot.setRangeTopMin(maxHumidValue + 0.1);
-
-		/** Formatter for (average) humidity plot */
-		LineAndPointFormatter humidSeriesFormatter;
-		/** Formatter for max humidity plot */
-		LineAndPointFormatter humidMaxSeriesFormatter;
-		/** Formatter for min humidity plot */
-		LineAndPointFormatter humidMinSeriesFormatter;
-
-		if (isContinuous) {
-			humidLevelsSeries.useImplicitXVals();
-			humidSeriesFormatter = new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null);
-			humidSeriesFormatter.getLinePaint().setStrokeWidth(10);
-			humidLevelsPlot.addSeries(humidLevelsSeries, humidSeriesFormatter);
-		} else {
-			if (isDay) {
-				if (dayStamps.size() == 0) {
-					xValueTitle = xValueTitle +" "+ getString(R.string.noData);
-				} else {
-					xValueTitle = xValueTitle +" "+ getString(R.string.hourOfDay) +" "+ Integer.toString(dayStamps.get(0));
-					for (int i=0; i<timeStamps.size(); i++) {
-						humidLevelsSeries.addLast(timeStamps.get(i),humidEntries.get(i));
-					}
-				}
-				humidSeriesFormatter = new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null);
-				humidSeriesFormatter.getLinePaint().setStrokeWidth(10);
-				humidLevelsPlot.addSeries(humidLevelsSeries, humidSeriesFormatter);
-			} else {
-				if (humidEntries.size() == 0) {
-					xValueTitle = xValueTitle +" "+ getString(R.string.noData);
-				} else {
-					for (int i=0; i<dayStamps.size(); i++) {
-						humidLevelsSeries.addLast(dayStamps.get(i),humidEntries.get(i));
-					}
-				}
-				/* Data series for the max humidity */
-                SimpleXYSeries humidMaxSeries = new SimpleXYSeries(getString(R.string.currHumidMax));
-				/* Data series for the min humidity */
-                SimpleXYSeries humidMinSeries = new SimpleXYSeries(getString(R.string.currHumidMin));
-				for (int i=0; i<timeStamps.size(); i++) {
-					humidMaxSeries.addLast(dayStamps.get(i), humidMaxEntries.get(i));
-					humidMinSeries.addLast(dayStamps.get(i), humidMinEntries.get(i));
-				}
-				humidSeriesFormatter = new LineAndPointFormatter(Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT, null);
-				humidSeriesFormatter.getLinePaint().setStrokeWidth(10);
-				humidLevelsPlot.addSeries(humidLevelsSeries, humidSeriesFormatter);
-				humidMaxSeriesFormatter = new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null);
-				humidMaxSeriesFormatter.getLinePaint().setStrokeWidth(10);
-				humidLevelsPlot.addSeries(humidMaxSeries, humidMaxSeriesFormatter);
-				humidMinSeriesFormatter = new LineAndPointFormatter(Color.GREEN, Color.TRANSPARENT, Color.TRANSPARENT, null);
-				humidMinSeriesFormatter.getLinePaint().setStrokeWidth(10);
-				humidLevelsPlot.addSeries(humidMinSeries, humidMinSeriesFormatter);
-			}
-		}
-
-		humidLevelsPlot.setDomainStepValue(plotValues);
-		humidLevelsPlot.setTicksPerRangeLabel(3);
-		humidLevelsPlot.getLayoutManager().remove(humidLevelsPlot.getLegendWidget());
-		humidLevelsPlot.getDomainLabelWidget().pack();
-		if (isContinuous) {
-			humidLevelsPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 2);
-		} else {
-			if (humidLevelsSeries.size() < 16) {
-				humidLevelsPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 1);
-			} else {
-				humidLevelsPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 2);
-			}
-		}
-		humidLevelsPlot.setDomainValueFormat(new DecimalFormat("#"));
-		humidLevelsPlot.getGraphWidget().setMarginBottom(margin30dp);
-		humidLevelsPlot.getGraphWidget().setMarginTop(margin10dp);
-		humidLevelsPlot.getGraphWidget().setMarginLeft(margin20dp);
-		humidLevelsPlot.getGraphWidget().setMarginRight(margin10dp);
-		humidLevelsPlot.getGraphWidget().getDomainLabelPaint().setTextSize(textSizeSmall);
-		humidLevelsPlot.getDomainLabelWidget().getLabelPaint().setTextSize(textSizeSmall);
-		humidLevelsPlot.getGraphWidget().getRangeLabelPaint().setTextSize(textSizeSmall);
-		humidLevelsPlot.getDomainLabelWidget().getLabelPaint().setTextSize(textSizeSmall);
-		humidLevelsPlot.getDomainLabelWidget().position(0, XLayoutStyle.ABSOLUTE_FROM_CENTER,
-				0, YLayoutStyle.RELATIVE_TO_BOTTOM, AnchorPosition.BOTTOM_MIDDLE);
-		humidLevelsPlot.setDomainLabel(xValueTitle);
-
-		humidLevelsPlot.getRangeLabelWidget().getLabelPaint().setTextSize(textSizeMedium);
-		humidLevelsPlot.setRangeLabel(getString(R.string.humidSign));
-		humidLevelsPlot.getRangeLabelWidget().position(0.04f, XLayoutStyle.RELATIVE_TO_LEFT,
-				-0.15f, YLayoutStyle.RELATIVE_TO_BOTTOM,
-				AnchorPosition.LEFT_BOTTOM);
-		humidLevelsPlot.getRangeLabelWidget().setOrientation(TextOrientationType.HORIZONTAL);
-		humidLevelsPlot.getRangeLabelWidget().pack();
-
-		// Change border color
-		humidLevelsPlot.getBackgroundPaint().setColor(colorDark);
-		// Change grid background color
-		humidLevelsPlot.getGraphWidget().getGridBackgroundPaint().setColor(colorBright);
-		// Change grid color
-		humidLevelsPlot.getGraphWidget().getRangeGridLinePaint().setColor
-				(Color.TRANSPARENT);
-		humidLevelsPlot.getGraphWidget().getRangeSubGridLinePaint().setColor
-				(Color.TRANSPARENT);
-		humidLevelsPlot.getGraphWidget().getDomainGridLinePaint().setColor
-				(Color.TRANSPARENT);
-		humidLevelsPlot.getGraphWidget().getDomainSubGridLinePaint().setColor
-				(Color.TRANSPARENT);
-		// Change plot background color
-		humidLevelsPlot.getGraphWidget().getBackgroundPaint().setColor(colorDark);
-		// Change axis values text color and increment value
-		if (isContinuous) {
-			humidLevelsPlot.getGraphWidget().getDomainLabelPaint().setColor(Color.TRANSPARENT);
-		} else {
-			humidLevelsPlot.getGraphWidget().getDomainLabelPaint().setColor(Color.WHITE);
-			humidLevelsPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 2);
-		}
-		humidLevelsPlot.getGraphWidget().getRangeLabelPaint().setColor(Color.WHITE);
-
-		humidLevelsPlot.redraw();
-	}
-
-	/**
-	 * Clean up humidity chart for a new initialization
-	 */
-	private void clearHumidChart() {
-		if (humidLevelsSeries.size() != 0) {
-			for (int i=0; i<=humidLevelsSeries.size(); i++) {
-				humidLevelsSeries.removeFirst();
-			}
-		}
-		humidLevelsPlot.removeSeries(humidLevelsSeries);
-		humidLevelsPlot.removeMarkers();
-		humidLevelsPlot.clear();
-	}
-
-	/**
-	 * Get current date & time as string
-	 *
-	 * @return <code>int[]</code>
-	 *            Date and time as integer values
-	 *            int[0] = hour
-	 *            int[1] = day
-	 *            int[2] = month
-	 */
-	public static int[] getCurrentDate() {
-		/** Integer array for return values */
-		int[] currTime = new int[3];
-		/** Calendar to get current time and date */
-		Calendar cal = Calendar.getInstance();
-
-		/** Today's day */
-		currTime[1] = cal.get(Calendar.DATE);
-
-		/** Current hour */
-		currTime[0] = cal.get(Calendar.HOUR_OF_DAY);
-
-		/** Today's month */
-		currTime[2] = cal.get(Calendar.MONTH) + 1;
-		return currTime;
-	}
-
-	/**
-	 * Read all entries from the database and write them in CSV format to the external storage
-	 * File is saved in /WeatherStation/MM-dd-WeatherStation.csv
-	 * MM = month
-	 * dd = today's day
-	 *
-	 * @return <code>boolean</code>
-	 *              true if file could be created
-	 *              false if there was an error
-	 */
-	private boolean exportDatabase() {
-
-		/**First of all we check if the external storage of the device is available for writing.
-		 * Remember that the external storage is not necessarily the sd card. Very often it is
-		 * the device storage.
-		 */
-		/** Status of external storage (mounted or not) */
-		String state = Environment.getExternalStorageState();
-		if (!Environment.MEDIA_MOUNTED.equals(state)) {
-			return false;
-		}
-		else {
-			//We use our own directory for saving our .csv file.
-			/** Current time as integer array */
-			int[] currTime = getCurrentDate();
-			exportFilePath = path + Integer.toString(currTime[2]) + "-" +
-					Integer.toString(currTime[1]) + "-" +
-					"WeatherStation.csv";
-			/** Pointer to directory */
-			File file = new File(path);
-			if (!file.exists()) {
-				if (!file.mkdirs()) {
-					// Big problem as we cannot create the path
-					if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Cannot create folder on ext memory");
-                    return false;
-				}
-			}
-			file = new File(exportFilePath);
-			if (file.exists()) {
-				if (!file.delete()) {
-					// Big problem as we cannot delete the old file
-					if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Cannot delete existing file");
-                    return false;
-				}
-			}
-
-			/** PrintWriter to write into CSV file */
-			PrintWriter printWriter = null;
-			try
-			{
-				//if (!file.createNewFile()) return false;
-				printWriter = new PrintWriter(new FileWriter(file));
-
-				/** Instance of weather db helper */
-				wsDbHelper = new WSDatabaseHelper(this);
-				dataBase = wsDbHelper.getReadableDatabase();
-
-				/** Cursor holding all rows of the database */
-				Cursor allRows = wsDbHelper.getAll(dataBase);
-
-				allRows.moveToFirst();
-
-				//Write the name of the table and the name of the columns (comma separated values) in the .csv file.
-                /** String with the recorded values or description */
-				String record = "Timestamp,Datestamp,Daynumber," +
-						"Temperature,Pressure,Humidity," +
-						"MaxTemperature,MinTemperature,AverageTemperature," +
-						"MaxPressure,MinPressure,AveragePressure," +
-						"MaxHumidity,MinHumidity,AverageHumidity";
-				printWriter.println(record); //write the record in the .csv file
-				for (int i=0; i<allRows.getCount(); i++)
-				{
-					/** The timestamps */
-					int timeStamp = allRows.getInt(1);
-					/** The day stamps */
-					int dateStamp = allRows.getInt(2);
-					/** The day number */
-					int dayNumber = allRows.getInt(3);
-					/** The temperature value */
-					float hourTemp = allRows.getFloat(4);
-					/** The pressure value */
-					float hourPress = allRows.getFloat(5);
-					/** The humidity value */
-					float hourHumid = allRows.getFloat(6);
-					/** The max temperature value */
-					float maxTemp = allRows.getFloat(7);
-					/** The min temperature value */
-					float minTemp = allRows.getFloat(8);
-					/** The average temperature value */
-					float avgTemp = allRows.getFloat(9);
-					/** The max pressure value */
-					float maxPress = allRows.getFloat(10);
-					/** The min pressure value */
-					float minPress = allRows.getFloat(11);
-					/** The average pressure value */
-					float avgPress = allRows.getFloat(12);
-					/** The max humidity value */
-					float maxHumid = allRows.getFloat(13);
-					/** The min humidity value */
-					float minHumid = allRows.getFloat(14);
-					/** The average humidity value */
-					float avgHumid = allRows.getFloat(15);
-
-					/**Create the line to write in the .csv file.
-					 * We need a String where values are comma separated.
-					 * The field date (Long) is formatted in a readable text. The amount field
-					 * is converted into String.
-					 */
-					record = Integer.toString(timeStamp) + "," + Integer.toString(dateStamp) + "," + Integer.toString(dayNumber) + "," +
-							Float.toString(hourTemp) + "," + Float.toString(hourPress) + "," + Float.toString(hourHumid) + "," +
-							Float.toString(maxTemp) + "," + Float.toString(minTemp) + "," + Float.toString(avgTemp) + "," +
-							Float.toString(maxPress) + "," + Float.toString(minPress) + "," + Float.toString(avgPress) + "," +
-							Float.toString(maxHumid) + "," + Float.toString(minHumid) + "," + Float.toString(avgHumid) + ",";
-					printWriter.println(record); //write the record in the .csv file
-					allRows.moveToNext();
-				}
-				printWriter.flush();
-				allRows.close();
-				dataBase.close();
-				wsDbHelper.close();
-			}
-			catch(Exception exc) {
-				//if there are any exceptions, return false
-				return false;
-			}
-			finally {
-				if(printWriter != null) printWriter.close();
-			}
-
-			//If there are no errors, return true.
-			return true;
 		}
 	}
 
 	/**
-	* Backup database in JSON format on SD card
-	 * File is saved in /WeatherStation/MM-dd-WeatherStation.JSON
-	 * MM = month
-	 * dd = today's day
-	*
-	* @return <code>boolean</code>
-	*            true => write to file successful
-	*            false => write to file failed
-	*/
-	private boolean backupDBasJSON() {
-
-		/**First of all we check if the external storage of the device is available for writing.
-		 * Remember that the external storage is not necessarily the sd card. Very often it is
-		 * the device storage.
-		 */
-		/** Status of external storage (mounted or not) */
-		String state = Environment.getExternalStorageState();
-		if (!Environment.MEDIA_MOUNTED.equals(state)) {
-			return false;
-		}
-		else {
-			//We use our own directory for saving our .JSON file.
-			/** Current time as integer array */
-			int[] currTime = getCurrentDate();
-			exportFilePath = path + Integer.toString(currTime[2]) + "-" +
-					Integer.toString(currTime[1]) + "-" +
-					"WeatherStation.JSON";
-			/** Pointer to directory/file */
-			File file = new File(path);
-			if (!file.exists()) {
-				if (!file.mkdirs()) {
-					// Big problem as we cannot create the path
-					if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Cannot create folder on ext memory");
-					return false;
-				}
-			}
-			file = new File(exportFilePath);
-			if (file.exists()) {
-				if (!file.delete()) {
-					// Big problem as we cannot delete the old file
-					if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Cannot delete existing file");
-					return false;
-				}
-			}
-
-			/** JSON object to hold the JSON objects and arrays with the recorded items */
-			JSONArray jsonToday = new JSONArray();
-
-			try
-			{
-				/** Instance of weather db helper */
-				wsDbHelper = new WSDatabaseHelper(this);
-				dataBase = wsDbHelper.getReadableDatabase();
-
-				/** Cursor holding all rows of the database */
-				Cursor allRows = wsDbHelper.getAll(dataBase);
-
-				allRows.moveToFirst();
-
-				for (int i=0; i<allRows.getCount(); i++)
-				{
-					/** JSON object to hold recorded measures */
-					JSONObject obj = new JSONObject();
-					obj.put("ts", allRows.getInt(1));
-					obj.put("ds", allRows.getInt(2));
-					obj.put("dn", allRows.getInt(3));
-					obj.put("t", allRows.getFloat(4));
-					obj.put("p", allRows.getFloat(5));
-					obj.put("h", allRows.getFloat(6));
-					obj.put("mat", allRows.getFloat(7));
-					obj.put("mit", allRows.getFloat(8));
-					obj.put("avt", allRows.getFloat(9));
-					obj.put("map", allRows.getFloat(10));
-					obj.put("mip", allRows.getFloat(11));
-					obj.put("avp", allRows.getFloat(12));
-					obj.put("mah", allRows.getFloat(13));
-					obj.put("minh", allRows.getFloat(14));
-					obj.put("avh", allRows.getFloat(15));
-					jsonToday.put(obj);
-					allRows.moveToNext();
-				}
-
-				allRows.close();
-				dataBase.close();
-				wsDbHelper.close();
-			}
-			catch(Exception exc) {
-				//if there are any exceptions, return false
-				return false;
-			}
-			try {
-                /** File writer to JSON file */
-				FileWriter fileJSON = new FileWriter(exportFilePath);
-				fileJSON.write(jsonToday.toString());
-				fileJSON.flush();
-				fileJSON.close();
-			} catch (IOException e) {
-				return false;
-			}
-
-			//If there are no errors, return true.
-			return true;
-		}
-	}
-
-    /**
-     * Show dialog with available backup files
-     */
-    private void restoreFileDialog() {
-        /** File pointer to directory */
-        File directory = new File(path);
-
-        // clear files array
-        files.clear();
-        // get all the files from a directory
-        /** List with files in directory */
-        File[] fList = directory.listFiles();
-        for (File file : fList) {
-            if (file.isFile()) {
-                /** String with filename extension */
-                String filenameArray[] = file.getName().split("\\.");
-                if (filenameArray[filenameArray.length-1].equalsIgnoreCase("JSON")) {
-                    files.add(file.getName());
-                }
-            }
-        }
-
-        if (files.size() != 0) {
-            /** Builder for restore file selection dialog */
-            AlertDialog.Builder fileListBuilder = new AlertDialog.Builder(this);
-            /** Inflater for restore file selection dialog */
-            LayoutInflater fileListInflater = getLayoutInflater();
-            /** View for restore file selection dialog */
-            View fileListView = fileListInflater.inflate(R.layout.restore_dialog, null);
-            fileListBuilder.setView(fileListView);
-            /** Pointer to restore file selection dialog */
-            AlertDialog fileList = fileListBuilder.create();
-            fileList.setTitle(getString(R.string.sbRestore));
-
-            fileList.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.bRestore),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (isFileSelected) {
-                                dialog.dismiss();
-                                if (restoreDBfromJSON()) {
-	                                Utils.myAlert(appContext, getString(R.string.errorRestoreTitle), getString(R.string.errorRestore));
-                                } else {
-	                                Utils.myAlert(appContext, getString(R.string.succRestoreTitle), getString(R.string.succRestore, restoreFilePath));
-                                }
-                            } else {
-	                            Utils.myAlert(appContext, getString(R.string.errorRestoreTitle), getString(R.string.noFileSelected));
-                            }
-                        }
-                    });
-
-            fileList.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.cancel),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            isFileSelected = false;
-                            dialog.dismiss();
-                        }
-                    });
-
-            /** Pointer to list view with the files */
-            ListView lvFileList = (ListView) fileListView.findViewById(R.id.lv_FileList);
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                    this,
-                    android.R.layout.simple_list_item_1,
-                    files );
-
-            lvFileList.setAdapter(arrayAdapter);
-            lvFileList.setOnItemClickListener(this);
-
-            fileList.show();
-
-        } else {
-	        Utils.myAlert(this,
-		            getResources().getString(R.string.errorRestoreTitle),
-		            getResources().getString(R.string.noRestoreFile));
-        }
-
-    }
-
-    /**
-	 * Restore database from JSON format file
-	 *
-	 * @return <code>boolean</code>
-	 *            true => restore to database successful
-	 *            false => restore to database failed
+	 * Enable plot update every autoUpdate ms
+	 * if autoUpdate is 1000ms this is not used as the temp & humidity sensors smallest
+	 * update frequency is 1000ms
 	 */
-    private boolean restoreDBfromJSON() {
+	private void plotRefresh() {
+		if (BuildConfig.DEBUG) Log.d(LOG_TAG, "plotRefresh called");
 
-		/** List to hold the timestamps */
-		ArrayList<Integer> timeStamp = new ArrayList<>();
-		/** List to hold the day stamps */
-		ArrayList<Integer> dateStamp = new ArrayList<>();
-		/** List to hold the day numbers */
-		ArrayList<Integer> dayNumber = new ArrayList<>();
-		/** List to hold the temperature values */
-		ArrayList<Float>  hourTemp = new ArrayList<>();
-		/** List to hold the pressure values */
-		ArrayList<Float> hourPress = new ArrayList<>();
-		/** List to hold the humidity values */
-		ArrayList<Float> hourHumid = new ArrayList<>();
-		/** List to hold the max temperature values */
-		ArrayList<Float> maxTemp = new ArrayList<>();
-		/** List to hold the min temperature values */
-		ArrayList<Float> minTemp = new ArrayList<>();
-		/** List to hold the average temperature values */
-		ArrayList<Float> avgTemp = new ArrayList<>();
-		/** List to hold the max pressure values */
-		ArrayList<Float> maxPress = new ArrayList<>();
-		/** List to hold the min pressure values */
-		ArrayList<Float> minPress = new ArrayList<>();
-		/** List to hold the average pressure values */
-		ArrayList<Float> avgPress = new ArrayList<>();
-		/** List to hold the max humidity values */
-		ArrayList<Float> maxHumid = new ArrayList<>();
-		/** List to hold the min humidity values */
-		ArrayList<Float> minHumid = new ArrayList<>();
-		/** List to hold the average humidity values */
-		ArrayList<Float> avgHumid = new ArrayList<>();
-
-		try {
-			/** Pointer to directory/file */
-			File file = new File(restoreFilePath);
-
-			/** Stream to read file */
-			FileInputStream stream = new FileInputStream(file);
-			/** String that holds the JSON object */
-			String jsonStr = null;
-			try {
-				/** File channel for reading stream */
-				FileChannel fc = stream.getChannel();
-				/** Buffer for reading */
-				MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-
-				jsonStr = Charset.defaultCharset().decode(bb).toString();
-			} catch (Exception e) {
-				return true;
-			}
-			finally {
-				stream.close();
-			}
-
-			/** JSON array with the backup data */
-			JSONArray jsonFromBackup = new JSONArray(jsonStr);
-
-			// looping through all nodes
-			for (int i = 0; i < jsonFromBackup.length(); i++) {
-				/** JSON object for a single data record */
-				JSONObject obj = jsonFromBackup.getJSONObject(i);
-
-				timeStamp.add(obj.getInt("ts"));
-				dateStamp.add(obj.getInt("ds"));
-				dayNumber.add(obj.getInt("dn"));
-				hourTemp.add((float) obj.getDouble("t"));
-				hourPress.add((float) obj.getDouble("p"));
-				hourHumid.add((float) obj.getDouble("h"));
-				maxTemp.add((float) obj.getDouble("mat"));
-				minTemp.add((float) obj.getDouble("mit"));
-				avgTemp.add((float) obj.getDouble("avt"));
-				maxPress.add((float) obj.getDouble("map"));
-				minPress.add((float) obj.getDouble("mip"));
-				avgPress.add((float) obj.getDouble("avp"));
-				maxHumid.add((float) obj.getDouble("mah"));
-				minHumid.add((float) obj.getDouble("minh"));
-				avgHumid.add((float) obj.getDouble("avh"));
-			}
-		} catch (Exception e) {
-			return true;
-		}
-
-		/** Instance of weather db helper */
-		wsDbHelper = new WSDatabaseHelper(this);
-		dataBase = wsDbHelper.getWritableDatabase();
-
-		wsDbHelper.cleanDB(dataBase);
-        // Write restore data to the database
-		for (int i=0; i<timeStamp.size(); i++) {
-			wsDbHelper.addDay(dataBase, timeStamp.get(i), dateStamp.get(i), dayNumber.get(i),
-					hourTemp.get(i), hourPress.get(i), hourHumid.get(i),
-					maxTemp.get(i), minTemp.get(i), avgTemp.get(i),
-					maxPress.get(i), minPress.get(i), avgPress.get(i),
-					maxHumid.get(i), minHumid.get(i), avgHumid.get(i));
-		}
-		dataBase.close();
-		wsDbHelper.close();
-		return false;
+		isUpdateRequest = true;
+		lastTempValue = lastPressValue = lastHumidValue = -9999;
 	}
 }

@@ -124,7 +124,7 @@ public class BGService extends Service implements SensorEventListener {
 				" "+event.sensor.getType());
 
 		/** Integer array for return values */
-		int[] currTime = WeatherStation.getCurrentDate();
+		int[] currTime = Utils.getCurrentDate();
 		if (BuildConfig.DEBUG) Log.d(LOG_TAG, "event timestamp "+currTime[0]+"h "
 				+" on "+currTime[1]+" of month "+currTime[2]);
 

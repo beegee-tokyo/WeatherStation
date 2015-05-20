@@ -91,6 +91,92 @@
             android:onClick="onClick"/>
 
         <TextView
+            android:id="@+id/sb_info"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dip"
+            android:layout_marginLeft="10dip"
+            android:layout_marginStart="10dip"
+            android:layout_marginRight="10dip"
+            android:layout_marginEnd="10dip"
+            android:drawableLeft="@android:drawable/ic_menu_info_details"
+            android:drawableStart="@android:drawable/ic_menu_info_details"
+            android:drawablePadding="5dip"
+            android:gravity="center|start"
+            android:text="@string/sbSensorInfo"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:onClick="onClick"/>
+
+        <LinearLayout
+            android:id="@+id/sb_info_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/sb_info_temp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dip"
+                android:layout_marginLeft="30dip"
+                android:layout_marginStart="30dip"
+                android:layout_marginRight="10dip"
+                android:layout_marginEnd="10dip"
+                android:drawableLeft="@drawable/ic_temperature"
+                android:drawableStart="@drawable/ic_temperature"
+                android:drawablePadding="5dip"
+                android:gravity="center|start"
+                android:text="@string/sbTempInfo"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:onClick="onClick"/>
+
+            <TextView
+                android:id="@+id/sb_info_pressure"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dip"
+                android:layout_marginLeft="30dip"
+                android:layout_marginStart="30dip"
+                android:layout_marginRight="10dip"
+                android:layout_marginEnd="10dip"
+                android:drawableLeft="@drawable/ic_pressure"
+                android:drawableStart="@drawable/ic_pressure"
+                android:drawablePadding="5dip"
+                android:gravity="center|start"
+                android:text="@string/sbPressInfo"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:onClick="onClick"
+                android:singleLine="true"/>
+
+            <TextView
+                android:id="@+id/sb_info_humidity"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dip"
+                android:layout_marginLeft="30dip"
+                android:layout_marginStart="30dip"
+                android:layout_marginRight="10dip"
+                android:layout_marginEnd="10dip"
+                android:drawableLeft="@drawable/ic_humidity"
+                android:drawableStart="@drawable/ic_humidity"
+                android:drawablePadding="5dip"
+                android:gravity="center|start"
+                android:text="@string/sbHumidInfo"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:onClick="onClick"/>
+
+        </LinearLayout>
+
+        <TextView
             android:id="@+id/sb_settings"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -109,65 +195,109 @@
             android:textStyle="bold"
             android:onClick="onClick"/>
 
-        <TextView
-            android:id="@+id/sb_temp"
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:id="@+id/sb_settings_group"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dip"
-            android:layout_marginLeft="30dip"
-            android:layout_marginStart="30dip"
-            android:layout_marginRight="10dip"
-            android:layout_marginEnd="10dip"
-            android:drawableLeft="@drawable/ic_temperature"
-            android:drawableStart="@drawable/ic_temperature"
-            android:drawablePadding="5dip"
-            android:gravity="center|start"
-            android:text="@string/sbTempUnits"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:onClick="onClick"
-            android:visibility="gone"/>
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <TextView
-            android:id="@+id/sb_pressure"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dip"
-            android:layout_marginLeft="30dip"
-            android:layout_marginStart="30dip"
-            android:layout_marginRight="10dip"
-            android:layout_marginEnd="10dip"
-            android:drawableLeft="@drawable/ic_pressure"
-            android:drawableStart="@drawable/ic_pressure"
-            android:drawablePadding="5dip"
-            android:gravity="center|start"
-            android:text="@string/sbPressUnits"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:onClick="onClick"
-            android:visibility="gone"/>
+            <TextView
+                android:id="@+id/sb_temp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dip"
+                android:layout_marginLeft="30dip"
+                android:layout_marginStart="30dip"
+                android:layout_marginRight="10dip"
+                android:layout_marginEnd="10dip"
+                android:drawableLeft="@drawable/ic_temperature"
+                android:drawableStart="@drawable/ic_temperature"
+                android:drawablePadding="5dip"
+                android:gravity="center|start"
+                android:text="@string/sbTempUnits"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:onClick="onClick"/>
 
-        <TextView
-            android:id="@+id/sb_theme"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dip"
-            android:layout_marginLeft="30dip"
-            android:layout_marginStart="30dip"
-            android:layout_marginRight="10dip"
-            android:layout_marginEnd="10dip"
-            android:drawableLeft="@drawable/ic_themes"
-            android:drawableStart="@drawable/ic_themes"
-            android:drawablePadding="5dip"
-            android:gravity="center|start"
-            android:text="@string/sbThemes"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:onClick="onClick"
-            android:visibility="gone"/>
+            <TextView
+                android:id="@+id/sb_pressure"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dip"
+                android:layout_marginLeft="30dip"
+                android:layout_marginStart="30dip"
+                android:layout_marginRight="10dip"
+                android:layout_marginEnd="10dip"
+                android:drawableLeft="@drawable/ic_pressure"
+                android:drawableStart="@drawable/ic_pressure"
+                android:drawablePadding="5dip"
+                android:gravity="center|start"
+                android:text="@string/sbPressUnits"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:onClick="onClick"/>
+
+            <TextView
+                android:id="@+id/sb_update"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dip"
+                android:layout_marginLeft="30dip"
+                android:layout_marginStart="30dip"
+                android:layout_marginRight="10dip"
+                android:layout_marginEnd="10dip"
+                android:drawableLeft="@drawable/ic_screen_update"
+                android:drawableStart="@drawable/ic_screen_update"
+                android:drawablePadding="5dip"
+                android:gravity="center|start"
+                android:text="@string/sbScreenUpdate"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:onClick="onClick"/>
+
+            <TextView
+                android:id="@+id/sb_vintage"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dip"
+                android:layout_marginLeft="30dip"
+                android:layout_marginStart="30dip"
+                android:layout_marginRight="10dip"
+                android:layout_marginEnd="10dip"
+                android:drawableLeft="@drawable/ic_vintage"
+                android:drawableStart="@drawable/ic_vintage"
+                android:drawablePadding="5dip"
+                android:gravity="center|start"
+                android:text="@string/sbVintage"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:onClick="onClick"/>
+
+            <TextView
+                android:id="@+id/sb_theme"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dip"
+                android:layout_marginLeft="30dip"
+                android:layout_marginStart="30dip"
+                android:layout_marginRight="10dip"
+                android:layout_marginEnd="10dip"
+                android:drawableLeft="@drawable/ic_themes"
+                android:drawableStart="@drawable/ic_themes"
+                android:drawablePadding="5dip"
+                android:gravity="center|start"
+                android:text="@string/sbThemes"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:onClick="onClick"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

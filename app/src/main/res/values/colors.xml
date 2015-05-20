@@ -8,5 +8,7 @@
     <color name="my_orange_bright">#ffffee66</color>
     <color name="my_red_bright">#ffff7777</color>
     <color name="my_white_dark">#ff555555</color>
+    <color name="my_gold">#ffd700</color>
+    <color name="my_gold_brown">#ff996515</color>
 
 </resources>

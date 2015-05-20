@@ -26,8 +26,10 @@
     <string name="pressSignH" translatable="false">hPa</string>
     <string name="pressSignM" translatable="false">mmHg</string>
     <string name="humidSign" translatable="false">%</string>
+    <string name="milliAmpere" translatable="false">mA</string>
+    <string name="milliSecond" translatable="false">ms</string>
     <string name="waitForSensor">Query sensor</string>
-    <string name="sensorNotAvail">Not available</string>
+    <string name="sensorNotAvail">Sensor not available</string>
     <string name="noData">No records available</string>
     <string name="errorExportTitle">Export error</string>
     <string name="errorExport">Could not export data to CSV file. Check if your SD card is inserted and that you have sufficient space left.</string>
@@ -53,6 +55,10 @@
     <string name="themeWhite">White</string>
     <string name="clearTitle">Clear recorded data</string>
     <string name="clearText">Do you really want to delete all recorded data?</string>
+    <string name="upTendency">&#x25B2;</string>
+    <string name="downTendency">&#x25BC;</string>
+    <string name="straightTendency">&#x25B6;</string>
+    <string name="sbVintage">Toggle view style</string>
 
     <!-- Drawer messages -->
     <string name="drawer_open">Open navigation drawer</string>
@@ -61,11 +67,35 @@
     <string name="sbBackup">Backup records</string>
     <string name="sbRestore">Restore records</string>
     <string name="sbClear">Clear recorded data</string>
+    <string name="sbSensorInfo">Sensor info</string>
+    <string name="sbTempInfo">Temperature sensor</string>
+    <string name="sbPressInfo">Pressure sensor</string>
+    <string name="sbHumidInfo">Humidity sensor</string>
     <string name="sbSettings">Settings</string>
     <string name="sbTempUnits">Temperature units</string>
     <string name="sbPressUnits">Pressure units</string>
+    <string name="sbScreenUpdate">Screen update rate</string>
     <string name="sbThemes">Theme</string>
+
+    <!-- Dialog text -->
+    <string name="tvSensorTypeTemp">Temperature sensor</string>
+    <string name="tvSensorTypePressure">Pressure sensor</string>
+    <string name="tvSensorTypeHumidity">Humidity sensor</string>
+    <string name="androidName">Name:</string>
+    <string name="vendorName">Vendor:</string>
+    <string name="sensorResolution">Resolution:</string>
+    <string name="sensorType">Type:</string>
+    <string name="sensorPower">Power:</string>
+    <string name="sensorVersion">Version:</string>
+    <string name="sensorRate">Update time:</string>
 
     <!-- Google adMob -->
     <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+
+    <string name="tvWidgetMaxText">320</string>
+    <string name="tvWidgetAvgText">300</string>
+    <string name="tvWidgetMinText">280</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+
 </resources>
