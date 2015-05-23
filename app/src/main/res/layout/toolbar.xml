@@ -19,7 +19,8 @@
             android:clickable="true"
             android:src="@mipmap/ic_launcher"
             android:contentDescription="@string/app_name"
-            android:onClick="onClick"/>
+            android:onClick="onClick"
+            android:background="@android:color/transparent"/>
 
         <ImageButton
             android:id="@+id/b_last"

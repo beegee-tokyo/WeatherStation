@@ -58,7 +58,6 @@
     <string name="upTendency">&#x25B2;</string>
     <string name="downTendency">&#x25BC;</string>
     <string name="straightTendency">&#x25B6;</string>
-    <string name="sbVintage">Toggle view style</string>
 
     <!-- Drawer messages -->
     <string name="drawer_open">Open navigation drawer</string>
@@ -97,5 +96,7 @@
     <string name="tvWidgetMinText">280</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
+    <string name="tvTime">00:00</string>
+    <string name="tvDate">22 May Fri</string>
 
 </resources>

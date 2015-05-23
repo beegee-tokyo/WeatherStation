@@ -11,10 +11,12 @@ import android.graphics.Color;
 import android.hardware.Sensor;
 import android.os.Build;
 import android.os.StrictMode;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -1361,6 +1363,90 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 			if (android.os.Build.VERSION.SDK_INT >= 17) {
 				layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START, 0);
 				layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+			}
+		}
+	}
+
+	/**
+	 * Get today max and min values from the database and compare with current measurement
+	 * If current measurement is bigger or smaller, use current measurement instead
+	 */
+	public static void getTodayMinMax() {
+		wsDbHelper = new WSDatabaseHelper(appContext);
+		dataBase = wsDbHelper.getReadableDatabase();
+		/** Cursor filled with existing entries of today */
+		Cursor dayEntry = wsDbHelper.getDay(dataBase, 1);
+		dayEntry.moveToLast();
+		// get min and max values of today
+		if (dayEntry.getFloat(6) >= lastTempValue ) {
+			todayMaxTemp = Utils.cToU(dayEntry.getFloat(6), tempUnit);
+		} else {
+			todayMaxTemp = Utils.cToU(lastTempValue, tempUnit);
+		}
+		if (dayEntry.getFloat(7) <= lastTempValue ) {
+			todayMinTemp = Utils.cToU(dayEntry.getFloat(7), tempUnit);
+		} else {
+			todayMinTemp = Utils.cToU(lastTempValue, tempUnit);
+		}
+		if (dayEntry.getFloat(9) >= lastPressValue ) {
+			todayMaxPress = Utils.cToU(dayEntry.getFloat(9), pressUnit);
+		} else {
+			todayMaxPress = Utils.cToU(lastPressValue, pressUnit);
+		}
+		if (dayEntry.getFloat(10) <= lastPressValue ) {
+			todayMinPress = Utils.cToU(dayEntry.getFloat(10), pressUnit);
+		} else {
+			todayMinPress = Utils.cToU(lastPressValue, pressUnit);
+		}
+		if (dayEntry.getFloat(12) >= lastHumidValue ) {
+			todayMaxHumid = dayEntry.getFloat(12);
+		} else {
+			todayMaxHumid = lastHumidValue;
+		}
+		if (dayEntry.getFloat(13) >= lastHumidValue ) {
+			todayMinHumid = dayEntry.getFloat(13);
+		} else {
+			todayMinHumid = lastHumidValue;
+		}
+		dataBase.close();
+		wsDbHelper.close();
+	}
+
+	/**
+	 * Get date and time and update station view.
+	 * Show forecast icon depending on current air pressure
+	 */
+	public static void updateStationView() {
+
+		/** Calendar to get current date and time */
+		Calendar c = Calendar.getInstance();
+
+		tvDate.setText(DateUtils.formatDateTime(appContext, c.getTimeInMillis(),
+				DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
+
+		tvTime.setText(DateUtils.formatDateTime(appContext, c.getTimeInMillis(),
+				DateUtils.FORMAT_SHOW_TIME));
+
+		/** Time of day to select day or night forecast icon */
+		int time = c.get(Calendar.HOUR_OF_DAY);
+
+		/** ImageView for the tendency picture */
+		ImageView ivForecast = (ImageView) appActivity.findViewById(R.id.ivForecast);
+
+		// TODO this should be improved in the future by a better forcast algorithm than just the pressure
+		if (lastPressValue2 < 995) {
+			ivForecast.setImageDrawable(appActivity.getResources().getDrawable(R.mipmap.ic_rain));
+		} else if (lastPressValue2 < 1025) {
+			if (time < 6 || time >19) {
+				ivForecast.setImageDrawable(appActivity.getResources().getDrawable(R.mipmap.ic_cloudmoon));
+			} else {
+				ivForecast.setImageDrawable(appActivity.getResources().getDrawable(R.mipmap.ic_cloudsun));
+			}
+		} else {
+			if (time < 6 || time >19) {
+				ivForecast.setImageDrawable(appActivity.getResources().getDrawable(R.mipmap.ic_moon));
+			} else {
+				ivForecast.setImageDrawable(appActivity.getResources().getDrawable(R.mipmap.ic_sun));
 			}
 		}
 	}

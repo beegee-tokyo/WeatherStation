@@ -30,6 +30,10 @@
         <include
             layout="@layout/vintage_view"/>
 
+        <!-- the vintage style view -->
+        <include
+            layout="@layout/station_view"/>
+
         <com.google.android.gms.ads.AdView
             android:id="@+id/adView"
             android:layout_height="wrap_content"

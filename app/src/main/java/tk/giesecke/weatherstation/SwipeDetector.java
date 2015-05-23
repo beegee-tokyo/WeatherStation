@@ -79,7 +79,7 @@ public class SwipeDetector implements View.OnTouchListener{
 				float deltaY = downY - upY;
 
 				//HORIZONTAL SCROLL
-				int min_distance = 100;
+				int min_distance = 150;
 				if(Math.abs(deltaX) > Math.abs(deltaY))
 				{
 					if(Math.abs(deltaX) > min_distance){

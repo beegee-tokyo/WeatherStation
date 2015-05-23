@@ -260,25 +260,6 @@
                 android:onClick="onClick"/>
 
             <TextView
-                android:id="@+id/sb_vintage"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dip"
-                android:layout_marginLeft="30dip"
-                android:layout_marginStart="30dip"
-                android:layout_marginRight="10dip"
-                android:layout_marginEnd="10dip"
-                android:drawableLeft="@drawable/ic_vintage"
-                android:drawableStart="@drawable/ic_vintage"
-                android:drawablePadding="5dip"
-                android:gravity="center|start"
-                android:text="@string/sbVintage"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"
-                android:onClick="onClick"/>
-
-            <TextView
                 android:id="@+id/sb_theme"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
