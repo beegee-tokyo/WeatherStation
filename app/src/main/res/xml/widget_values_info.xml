@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:tools="http://schemas.android.com/tools"
-                    android:minWidth="40dp"
-                    android:minHeight="40dp"
+                    android:minWidth="160dp"
+                    android:minHeight="80dp"
                     android:updatePeriodMillis="0"
-                    android:previewImage="@drawable/example_appwidget_preview"
-                    android:initialLayout="@layout/widget_single"
-                    android:configure="tk.giesecke.weatherstation.WSWidgetConfigureActivity"
+                    android:previewImage="@drawable/widget_values"
+                    android:initialLayout="@layout/widget_values"
+                    android:configure="tk.giesecke.weatherstation.WidgetValuesConfigure"
                     android:resizeMode="horizontal|vertical"
                     android:widgetCategory="home_screen|keyguard"
-                    android:initialKeyguardLayout="@layout/widget_double"
+                    android:initialKeyguardLayout="@layout/widget_values"
                     tools:ignore="UnusedAttribute">
 </appwidget-provider>

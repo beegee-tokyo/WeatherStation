@@ -1,7 +1,9 @@
 package tk.giesecke.weatherstation;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
@@ -19,10 +21,10 @@ import java.util.List;
 /**
  * BGService
  * background service to get hourly updates from the sensors
- * and save them into the shared preferences
+ * and save them into the database
  *
  * @author Bernd Giesecke
- * @version 0.1 beta May 5, 2015.
+ * @version 1.0 May 31, 2015.
  */
 public class BGService extends Service implements SensorEventListener {
 
@@ -31,6 +33,12 @@ public class BGService extends Service implements SensorEventListener {
 
 	/** SensorManager to get info about available sensors */
 	private SensorManager mSensorManager;
+	/** Access to temp sensor */
+	private Sensor mTempSensor;
+	/** Access to pressure sensor */
+	private Sensor mPressSensor;
+	/* Access to humidity sensor */
+	private Sensor mHumidSensor;
 	/** Last temperature for hourly recording */
 	private float lastTempValue;
 	/** Last pressure for hourly recording */
@@ -69,13 +77,13 @@ public class BGService extends Service implements SensorEventListener {
 		mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 		// connect to temperature sensor
 		/* Access to temp sensor */
-		Sensor mTempSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+		mTempSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
 		// connect to air pressure sensor
 		/* Access to pressure sensor */
-		Sensor mPressSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+		mPressSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
 		// connect to humidity sensor
 		/* Access to humidity sensor */
-		Sensor mHumidSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+		mHumidSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
 
 		if (mTempSensor != null) {
 			mSensorManager.registerListener(this, mTempSensor, SensorManager.SENSOR_DELAY_FASTEST);
@@ -94,6 +102,13 @@ public class BGService extends Service implements SensorEventListener {
 		retryCounter = 0;
 		// Set day shift done to false */
 		isShiftDone = false;
+
+		/** IntentFilter to receive Screen on/off broadcast msgs */
+		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+		filter.addAction(Intent.ACTION_SCREEN_OFF);
+		/** BroadcastReceiver to receive Screen on/off broadcast msgs */
+		BroadcastReceiver mReceiver = new ScreenReceiver();
+		registerReceiver(mReceiver, filter);
 	}
 
 	/**
@@ -149,13 +164,29 @@ public class BGService extends Service implements SensorEventListener {
 				/** Flag for addDayToDB success or failure */
 				boolean result = addDayToDB(currTime[0], currTime[1], lastTempValue, lastPressValue, lastHumidValue);
 				if (result) {
-					mSensorManager.unregisterListener(this);
+					if (mTempSensor != null) {
+						mSensorManager.unregisterListener(this, mTempSensor);
+					}
+					if (mPressSensor != null) {
+						mSensorManager.unregisterListener(this, mPressSensor);
+					}
+					if (mHumidSensor != null) {
+						mSensorManager.unregisterListener(this, mHumidSensor);
+					}
 					stopSelf();
 				} else {
 					// retry until retry counter reaches 20
 					lastTempValue = lastPressValue = lastHumidValue = -9999;
 					if (retryCounter++ == 20) {
-						mSensorManager.unregisterListener(this);
+						if (mTempSensor != null) {
+							mSensorManager.unregisterListener(this, mTempSensor);
+						}
+						if (mPressSensor != null) {
+							mSensorManager.unregisterListener(this, mPressSensor);
+						}
+						if (mHumidSensor != null) {
+							mSensorManager.unregisterListener(this, mHumidSensor);
+						}
 						stopSelf();
 					}
 				}
@@ -170,13 +201,29 @@ public class BGService extends Service implements SensorEventListener {
 				/** Flag for addDayToDB success or failure */
 				boolean result = addDayToDB(currTime[0], currTime[1], lastTempValue, lastPressValue, lastHumidValue);
 				if (result) {
-					mSensorManager.unregisterListener(this);
+					if (mTempSensor != null) {
+						mSensorManager.unregisterListener(this, mTempSensor);
+					}
+					if (mPressSensor != null) {
+						mSensorManager.unregisterListener(this, mPressSensor);
+					}
+					if (mHumidSensor != null) {
+						mSensorManager.unregisterListener(this, mHumidSensor);
+					}
 					stopSelf();
 				} else {
 					// retry until retry counter reaches 20
 					lastTempValue = lastPressValue = lastHumidValue = -9999;
 					if (retryCounter++ == 20) {
-						mSensorManager.unregisterListener(this);
+						if (mTempSensor != null) {
+							mSensorManager.unregisterListener(this, mTempSensor);
+						}
+						if (mPressSensor != null) {
+							mSensorManager.unregisterListener(this, mPressSensor);
+						}
+						if (mHumidSensor != null) {
+							mSensorManager.unregisterListener(this, mHumidSensor);
+						}
 						stopSelf();
 					}
 				}

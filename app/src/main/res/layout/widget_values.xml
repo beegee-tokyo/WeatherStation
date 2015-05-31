@@ -1,0 +1,115 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:background="@drawable/round_corner_bg"
+                android:id="@+id/rlWidget1">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/llWrow1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/tvWidgetMaxText"
+            android:id="@+id/tv_widgetRow1Value"
+            android:textColor="@android:color/black"
+            android:layout_margin="2dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/tempSignK"
+            android:id="@+id/tv_widgetRow1Sign"
+            android:textColor="@android:color/black"
+            android:layout_margin="2dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/upTendency"
+            android:id="@+id/tv_widgetRow1Trend"
+            android:textColor="@android:color/black"
+            android:layout_margin="2dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/llWrow2"
+        android:layout_below="@+id/llWrow1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/tvWidgetAvgText"
+            android:id="@+id/tv_widgetRow2Value"
+            android:textColor="@android:color/black"
+            android:layout_margin="2dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/tempSignK"
+            android:id="@+id/tv_widgetRow2Sign"
+            android:textColor="@android:color/black"
+            android:layout_margin="2dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/straightTendency"
+            android:id="@+id/tv_widgetRow2Trend"
+            android:textColor="@android:color/black"
+            android:layout_margin="2dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/llWrow3"
+        android:layout_below="@+id/llWrow2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/tvWidgetMinText"
+            android:id="@+id/tv_widgetRow3Value"
+            android:textColor="@android:color/black"
+            android:layout_margin="2dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/tempSignK"
+            android:id="@+id/tv_widgetRow3Sign"
+            android:textColor="@android:color/black"
+            android:layout_margin="2dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/downTendency"
+            android:id="@+id/tv_widgetRow3Trend"
+            android:textColor="@android:color/black"
+            android:layout_margin="2dp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

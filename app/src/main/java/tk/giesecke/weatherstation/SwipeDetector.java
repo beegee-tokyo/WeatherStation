@@ -9,11 +9,13 @@ import android.view.View;
  * handles swipes on the screen
  *
  * @author Bernd Giesecke
- * @version 0.1 beta May 5, 2015.
+ * @version 1.0 May 31, 2015.
  */
 public class SwipeDetector implements View.OnTouchListener{
 
+	/** Float containg down movement in x axis */
 	private float downX;
+	/** Float containg down movement in y axis */
 	private float downY;
 
 	private onSwipeEvent swipeEventListener;
@@ -24,6 +26,12 @@ public class SwipeDetector implements View.OnTouchListener{
 		v.setOnTouchListener(this);
 	}
 
+	/**
+	 * Register listener for swipe events
+	 *
+	 * @param listener
+	 *            Sensor sensor.
+	 */
 	public void setOnSwipeListener(onSwipeEvent listener)
 	{
 		try{
@@ -36,6 +44,9 @@ public class SwipeDetector implements View.OnTouchListener{
 	}
 
 
+	/**
+	 * Reports swipes from right to left
+	 */
 	private void onRightToLeftSwipe(){
 		if(swipeEventListener!=null)
 			swipeEventListener.SwipeEventDetected(SwipeTypeEnum.RIGHT_TO_LEFT);
@@ -43,6 +54,9 @@ public class SwipeDetector implements View.OnTouchListener{
 			Log.e("SwipeDetector error","please pass SwipeDetector.onSwipeEvent Interface instance");
 	}
 
+	/**
+	 * Reports swipes from left to right
+	 */
 	private void onLeftToRightSwipe(){
 		if(swipeEventListener!=null)
 			swipeEventListener.SwipeEventDetected(SwipeTypeEnum.LEFT_TO_RIGHT);
@@ -50,6 +64,9 @@ public class SwipeDetector implements View.OnTouchListener{
 			Log.e("SwipeDetector error","please pass SwipeDetector.onSwipeEvent Interface instance");
 	}
 
+	/**
+	 * Reports swipes from top to bottom
+	 */
 	private void onTopToBottomSwipe(){
 		if(swipeEventListener!=null)
 			swipeEventListener.SwipeEventDetected(SwipeTypeEnum.TOP_TO_BOTTOM);
@@ -57,6 +74,9 @@ public class SwipeDetector implements View.OnTouchListener{
 			Log.e("SwipeDetector error","please pass SwipeDetector.onSwipeEvent Interface instance");
 	}
 
+	/**
+	 * Reports swipes from bottom to top
+	 */
 	private void onBottomToTopSwipe(){
 		if(swipeEventListener!=null)
 			swipeEventListener.SwipeEventDetected(SwipeTypeEnum.BOTTOM_TO_TOP);
@@ -64,6 +84,18 @@ public class SwipeDetector implements View.OnTouchListener{
 			Log.e("SwipeDetector error", "please pass SwipeDetector.onSwipeEvent Interface instance");
 	}
 
+	/**
+	 * Receiver for touch events
+	 * Calculates direction and length of swipe
+	 *
+	 * @param v
+	 *          View where the touch/swipe happend
+	 * @param event
+	 *          Motion event info
+	 * @return <code>boolean</code>
+	 *          True if swipe is detected
+	 *          False if no swipe is detected
+	 */
 	public boolean onTouch(View v, MotionEvent event) {
 		switch(event.getAction()){
 			case MotionEvent.ACTION_DOWN: {
@@ -72,13 +104,18 @@ public class SwipeDetector implements View.OnTouchListener{
 				return true;
 			}
 			case MotionEvent.ACTION_UP: {
+				/** Float containg up movement in x axis */
 				float upX = event.getX();
+				/** Float containg up movement in y axis */
 				float upY = event.getY();
 
+				/** Float containg movement delta in x axis */
 				float deltaX = downX - upX;
+				/** Float containg movement delta in y axis */
 				float deltaY = downY - upY;
 
 				//HORIZONTAL SCROLL
+				/** Minimum distance to accept as swipe */
 				int min_distance = 150;
 				if(Math.abs(deltaX) > Math.abs(deltaY))
 				{
@@ -124,11 +161,18 @@ public class SwipeDetector implements View.OnTouchListener{
 		}
 		return false;
 	}
+
+	/**
+	 * App interface for swipe events
+	 */
 	public interface onSwipeEvent
 	{
 		void SwipeEventDetected(SwipeTypeEnum SwipeType);
 	}
 
+	/**
+	 * Definitions for swipe directions
+	 */
 	public enum SwipeTypeEnum
 	{
 		RIGHT_TO_LEFT,LEFT_TO_RIGHT,TOP_TO_BOTTOM,BOTTOM_TO_TOP

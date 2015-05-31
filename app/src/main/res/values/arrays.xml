@@ -53,4 +53,12 @@
         <item>100f</item>
     </string-array>
 
+    <!-- Widget value selection array -->
+    <string-array name="widgetRowValues">
+        <item>Nothing</item>
+        <item>Temperature</item>
+        <item>Air pressure</item>
+        <item>Humidity</item>
+    </string-array>
+
 </resources>

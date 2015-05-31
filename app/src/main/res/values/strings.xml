@@ -91,12 +91,29 @@
     <!-- Google adMob -->
     <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
 
+    <!-- Widget configuration -->
     <string name="tvWidgetMaxText">320</string>
     <string name="tvWidgetAvgText">300</string>
     <string name="tvWidgetMinText">280</string>
-    <string name="configure">Configure</string>
-    <string name="add_widget">Add widget</string>
     <string name="tvTime">00:00</string>
     <string name="tvDate">22 May Fri</string>
+    <string name="tvWidgetTypeTxt">Select widget type</string>
+    <string name="rbWtype1">1 row</string>
+    <string name="rbWtype2">2 row</string>
+    <string name="rbWtype3">3 row</string>
+    <string name="tvWvalueSel">Select measure to show</string>
+    <string name="tvWvalueRow1">Row 1</string>
+    <string name="tvWvalueRow2">Row 2</string>
+    <string name="tvWvalueRow3">Row 3</string>
+    <string name="tvWupdate">Select refresh interval</string>
+    <string name="rbWupd1">1 min</string>
+    <string name="rbWupd2">5 min</string>
+    <string name="rbWupd3">10 min</string>
+    <string name="rbWupd4">30 min</string>
+    <string name="configErrorHead">Error</string>
+    <string name="configErrorPos1">You selected Temperature already in another row. Select another measure.</string>
+    <string name="configErrorPos2">You selected Pressure already in another row. Select another measure.</string>
+    <string name="configErrorPos3">You selected Humidity already in another row. Select another measure.</string>
+    <string name="configError">You need to selected at least one measure.</string>
 
 </resources>

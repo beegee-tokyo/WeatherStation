@@ -43,7 +43,7 @@ import java.util.List;
  * unit conversion methods
  *
  * @author Bernd Giesecke
- * @version 0.1 beta May 5, 2015.
+ * @version 1.0 May 31, 2015.
  */
 public class Utils extends WeatherStation implements AdapterView.OnItemClickListener {
 
@@ -574,9 +574,9 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 						tempLevelsSeries.addLast(dayStamps.get(i),tempEntries.get(i));
 					}
 				}
-				/* Data series for the max temperature */
+				/** Data series for the max temperature */
 				SimpleXYSeries tempMaxSeries = new SimpleXYSeries(appContext.getString(R.string.currTempMax));
-				/* Data series for the min temperature */
+				/** Data series for the min temperature */
 				SimpleXYSeries tempMinSeries = new SimpleXYSeries(appContext.getString(R.string.currTempMin));
 				for (int i=0; i<timeStamps.size(); i++) {
 					tempMaxSeries.addLast(dayStamps.get(i), tempMaxEntries.get(i));
@@ -751,9 +751,9 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 						pressLevelsSeries.addLast(dayStamps.get(i),pressEntries.get(i));
 					}
 				}
-				/* Data series for the max barometric pressure */
+				/** Data series for the max barometric pressure */
 				SimpleXYSeries pressMaxSeries = new SimpleXYSeries(appContext.getString(R.string.currPressMax));
-				/* Data series for the min barometric pressure */
+				/** Data series for the min barometric pressure */
 				SimpleXYSeries pressMinSeries = new SimpleXYSeries(appContext.getString(R.string.currPressMin));
 				for (int i=0; i<timeStamps.size(); i++) {
 					pressMaxSeries.addLast(dayStamps.get(i), pressMaxEntries.get(i));
@@ -941,9 +941,9 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 						humidLevelsSeries.addLast(dayStamps.get(i),humidEntries.get(i));
 					}
 				}
-				/* Data series for the max humidity */
+				/** Data series for the max humidity */
 				SimpleXYSeries humidMaxSeries = new SimpleXYSeries(appContext.getString(R.string.currHumidMax));
-				/* Data series for the min humidity */
+				/** Data series for the min humidity */
 				SimpleXYSeries humidMinSeries = new SimpleXYSeries(appContext.getString(R.string.currHumidMin));
 				for (int i=0; i<timeStamps.size(); i++) {
 					humidMaxSeries.addLast(dayStamps.get(i), humidMaxEntries.get(i));
@@ -1377,35 +1377,44 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 		/** Cursor filled with existing entries of today */
 		Cursor dayEntry = wsDbHelper.getDay(dataBase, 1);
 		dayEntry.moveToLast();
-		// get min and max values of today
-		if (dayEntry.getFloat(6) >= lastTempValue ) {
-			todayMaxTemp = Utils.cToU(dayEntry.getFloat(6), tempUnit);
+		if (dayEntry.getCount() != 0) {
+			// get min and max values of today
+			if (dayEntry.getFloat(6) >= lastTempValue ) {
+				todayMaxTemp = Utils.cToU(dayEntry.getFloat(6), tempUnit);
+			} else {
+				todayMaxTemp = Utils.cToU(lastTempValue, tempUnit);
+			}
+			if (dayEntry.getFloat(7) <= lastTempValue ) {
+				todayMinTemp = Utils.cToU(dayEntry.getFloat(7), tempUnit);
+			} else {
+				todayMinTemp = Utils.cToU(lastTempValue, tempUnit);
+			}
+			if (dayEntry.getFloat(9) >= lastPressValue ) {
+				todayMaxPress = Utils.cToU(dayEntry.getFloat(9), pressUnit);
+			} else {
+				todayMaxPress = Utils.cToU(lastPressValue, pressUnit);
+			}
+			if (dayEntry.getFloat(10) <= lastPressValue ) {
+				todayMinPress = Utils.cToU(dayEntry.getFloat(10), pressUnit);
+			} else {
+				todayMinPress = Utils.cToU(lastPressValue, pressUnit);
+			}
+			if (dayEntry.getFloat(12) >= lastHumidValue ) {
+				todayMaxHumid = dayEntry.getFloat(12);
+			} else {
+				todayMaxHumid = lastHumidValue;
+			}
+			if (dayEntry.getFloat(13) >= lastHumidValue ) {
+				todayMinHumid = dayEntry.getFloat(13);
+			} else {
+				todayMinHumid = lastHumidValue;
+			}
 		} else {
 			todayMaxTemp = Utils.cToU(lastTempValue, tempUnit);
-		}
-		if (dayEntry.getFloat(7) <= lastTempValue ) {
-			todayMinTemp = Utils.cToU(dayEntry.getFloat(7), tempUnit);
-		} else {
 			todayMinTemp = Utils.cToU(lastTempValue, tempUnit);
-		}
-		if (dayEntry.getFloat(9) >= lastPressValue ) {
-			todayMaxPress = Utils.cToU(dayEntry.getFloat(9), pressUnit);
-		} else {
 			todayMaxPress = Utils.cToU(lastPressValue, pressUnit);
-		}
-		if (dayEntry.getFloat(10) <= lastPressValue ) {
-			todayMinPress = Utils.cToU(dayEntry.getFloat(10), pressUnit);
-		} else {
 			todayMinPress = Utils.cToU(lastPressValue, pressUnit);
-		}
-		if (dayEntry.getFloat(12) >= lastHumidValue ) {
-			todayMaxHumid = dayEntry.getFloat(12);
-		} else {
 			todayMaxHumid = lastHumidValue;
-		}
-		if (dayEntry.getFloat(13) >= lastHumidValue ) {
-			todayMinHumid = dayEntry.getFloat(13);
-		} else {
 			todayMinHumid = lastHumidValue;
 		}
 		dataBase.close();
@@ -1433,7 +1442,7 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 		/** ImageView for the tendency picture */
 		ImageView ivForecast = (ImageView) appActivity.findViewById(R.id.ivForecast);
 
-		// TODO this should be improved in the future by a better forcast algorithm than just the pressure
+		// TODO this should be improved in the future by a better forecast algorithm than just the pressure
 		if (lastPressValue2 < 995) {
 			ivForecast.setImageDrawable(appActivity.getResources().getDrawable(R.mipmap.ic_rain));
 		} else if (lastPressValue2 < 1025) {

@@ -6,7 +6,8 @@
                 android:id="@+id/station"
                 android:background="@color/my_gray_bright"
                 android:visibility="visible"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                tools:context=".WeatherStation">
 
     <TextView
         android:layout_width="wrap_content"

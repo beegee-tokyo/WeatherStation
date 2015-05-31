@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * database access methods
  *
  * @author Bernd Giesecke
- * @version 0.1 beta May 5, 2015.
+ * @version 1.0 May 31, 2015.
  */
 class WSDatabaseHelper extends SQLiteOpenHelper {
 

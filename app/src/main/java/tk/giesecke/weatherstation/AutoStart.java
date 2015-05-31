@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 /**
@@ -13,13 +14,12 @@ import android.util.Log;
  * Broadcast receiver for boot completed
  *
  * @author Bernd Giesecke
- * @version 1.0 April 5, 2015.
+ * @version 1.0 May 31, 2015.
  */
 public class AutoStart extends BroadcastReceiver {
-	/**
-	 * Debug tag
-	 */
+	/** Debug tag */
 	private final static String LOG_TAG = "CoolIt AutoStart";
+
 	public AutoStart() {
 	}
 
@@ -39,6 +39,39 @@ public class AutoStart extends BroadcastReceiver {
 			/** AlarmManager for repeated call of background service */
 			AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 			manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 3600000, pendingIntent);
+
+			/** Access to shared preferences of app widget */
+			SharedPreferences wPrefs = context.getSharedPreferences("WidgetValues",0);
+			if (wPrefs.getInt("wNums",0) != 0) {
+				/** Update interval in ms */
+				int alarmTime;
+				switch (wPrefs.getInt("wUpdate",0)) {
+					default:
+						alarmTime = 60000;
+						break;
+					case 1:
+						alarmTime = 300000;
+						break;
+					case 2:
+						alarmTime = 600000;
+						break;
+					case 3:
+						alarmTime = 3000000;
+						break;
+				}
+
+				/** Intent for broadcast message to update widgets */
+				Intent widgetIntent = new Intent(WidgetValues.WIDGET_VALUE_UPDATE);
+				/** Pending intent for broadcast message to update widgets */
+				PendingIntent pendingWidgetIntent = PendingIntent.getBroadcast(
+						context, 1701, widgetIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+				/** Alarm manager for scheduled widget updates */
+				AlarmManager alarmManager = (AlarmManager) context.getSystemService
+						(Context.ALARM_SERVICE);
+				alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+						System.currentTimeMillis() + 10000,
+						alarmTime, pendingWidgetIntent);
+			}
 		}
 	}
 }

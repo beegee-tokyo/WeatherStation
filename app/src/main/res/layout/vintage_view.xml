@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:gauge="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:id="@+id/vintage"
                 android:background="@drawable/lightwoodportrait"
                 android:visibility="gone"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                tools:context=".WeatherStation">
 
     <TextView
         android:layout_width="wrap_content"

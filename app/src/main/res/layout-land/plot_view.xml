@@ -7,6 +7,7 @@
               android:baselineAligned="false"
               android:layout_above="@+id/adView"
               android:id="@+id/modern"
+              tools:context=".WeatherStation"
               android:visibility="gone">
 
     <LinearLayout

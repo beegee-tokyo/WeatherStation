@@ -5,9 +5,11 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
@@ -54,7 +56,7 @@ import java.util.List;
  * main activity
  *
  * @author Bernd Giesecke
- * @version 0.1 beta May 5, 2015.
+ * @version 1.0 May 31, 2015.
  */
 public class WeatherStation extends ActionBarActivity implements
 		View.OnClickListener, SensorEventListener, AdapterView.OnItemClickListener {
@@ -87,8 +89,6 @@ public class WeatherStation extends ActionBarActivity implements
 	private boolean isUpdateRequest;
 	/** Last temperature for ui display */
 	static float lastTempValue;
-	/** Last temperature for station display */
-	public static float lastTempValue2;
 	/** Last pressure for ui display  */
 	static float lastPressValue;
 	/** Last pressure for vintage ui display  */
@@ -314,7 +314,6 @@ public class WeatherStation extends ActionBarActivity implements
 		colorStatusVintage = getResources().getColor(R.color.my_gold);
 		colorStatusStation = getResources().getColor(android.R.color.darker_gray);
 
-
 		if (android.os.Build.VERSION.SDK_INT >= 21) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -365,6 +364,10 @@ public class WeatherStation extends ActionBarActivity implements
 		new SwipeDetector(actionBar).setOnSwipeListener(new SwipeDetector.onSwipeEvent() {
 			@Override
 			public void SwipeEventDetected(SwipeDetector.SwipeTypeEnum swipeType) {
+				if (swipeType == SwipeDetector.SwipeTypeEnum.TOP_TO_BOTTOM ||
+						swipeType == SwipeDetector.SwipeTypeEnum.BOTTOM_TO_TOP) {
+					return;
+				}
 				/** Layout for modern view */
 				LinearLayout plotLayout = (LinearLayout) findViewById(R.id.modern);
 				/** Layout for vintage view */
@@ -455,9 +458,13 @@ public class WeatherStation extends ActionBarActivity implements
 			}
 		});
 		// Register listener for up & down swipes in the main layout
-		new SwipeDetector(mDrawerLayout).setOnSwipeListener(new SwipeDetector.onSwipeEvent() {
+/*		new SwipeDetector(mDrawerLayout).setOnSwipeListener(new SwipeDetector.onSwipeEvent() {
 			@Override
 			public void SwipeEventDetected(SwipeDetector.SwipeTypeEnum swipeType) {
+				if (swipeType == SwipeDetector.SwipeTypeEnum.LEFT_TO_RIGHT ||
+						swipeType == SwipeDetector.SwipeTypeEnum.RIGHT_TO_LEFT) {
+					return;
+				}
 				ImageButton b_nav;
 				if (swipeType == SwipeDetector.SwipeTypeEnum.TOP_TO_BOTTOM &&
 						uiLayout == 0 && !isContinuous && plotValues == 24) {
@@ -501,7 +508,7 @@ public class WeatherStation extends ActionBarActivity implements
 				}
 			}
 		});
-
+*/
 		// Prepare views of weather values
 		tvCurrTempPlot = (TextView) findViewById(R.id.tvCurrTempPlot);
 		tvCurrTempVintage = (TextView) findViewById(R.id.tvCurrTempVintage);
@@ -666,6 +673,16 @@ public class WeatherStation extends ActionBarActivity implements
 		manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
 				3600000, pendingStartIntent);
 
+		/** Access to shared preferences of app widget */
+		SharedPreferences wPrefs = getSharedPreferences("WidgetValues",0);
+		if (wPrefs.getInt("wNums",0) != 0) {
+			/** IntentFilter to receive Screen on/off broadcast msgs */
+			IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+			filter.addAction(Intent.ACTION_SCREEN_OFF);
+			BroadcastReceiver mReceiver = new ScreenReceiver();
+			registerReceiver(mReceiver, filter);
+		}
+
 		/** View for Google Adsense ads */
 		AdView mAdView = (AdView) findViewById(R.id.adView);
 		/** Request for ad from Google */
@@ -723,6 +740,10 @@ public class WeatherStation extends ActionBarActivity implements
 		if (mHumidSensor != null) {
 			mSensorManager.unregisterListener(this, mHumidSensor);
 		}
+		WidgetValues.forceUpdate(this,
+				lastTemp,
+				lastPress,
+				lastHumid);
 	}
 
 	@Override
@@ -1364,7 +1385,6 @@ public class WeatherStation extends ActionBarActivity implements
 		switch (event.sensor.getType()) {
 			case Sensor.TYPE_AMBIENT_TEMPERATURE:
 				lastTempValue = event.values[0];
-				lastTempValue2 = Utils.cToU(event.values[0], 0);
 				gvThermo.setTargetValue(Utils.cToU(event.values[0], 1));
 				break;
 			case Sensor.TYPE_PRESSURE:
@@ -1387,7 +1407,6 @@ public class WeatherStation extends ActionBarActivity implements
 			/** String for tendency */
 			String tendency = getString(R.string.straightTendency);
 
-			// update temperature plot
 			if (lastTemp != 0f) {
 				if (Math.round(lastTempValue) > Math.round(lastTemp)) {
 					tendency = getString(R.string.upTendency);
@@ -1397,6 +1416,7 @@ public class WeatherStation extends ActionBarActivity implements
 			}
 			lastTemp = lastTempValue;
 			lastTempValue = Utils.cToU(lastTempValue, tempUnit);
+			// update temperature plot
 			tvCurrTempPlot.setText(String.format("%.01f",
 					lastTempValue) + Utils.tempUnit(appContext, tempUnit) + tendency);
 			tvCurrTempVintage.setText(String.format("%.01f",

@@ -9,7 +9,8 @@
                 android:layout_above="@+id/adView"
                 android:id="@+id/vintage"
                 android:visibility="gone"
-                android:background="@drawable/lightwoodland">
+                android:background="@drawable/lightwoodland"
+                tools:context=".WeatherStation">
 
     <TextView
         android:layout_width="wrap_content"
