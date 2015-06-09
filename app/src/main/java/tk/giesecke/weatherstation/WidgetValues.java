@@ -131,22 +131,16 @@ public class WidgetValues extends AppWidgetProvider {
 	 *            ID of the widget to be updated
 	 * @param temp
 	 *            Temperature value
-	 * @param tempTrend
-	 *            Temperature trend
 	 * @param press
 	 *            Pressure value
-	 * @param pressTrend
-	 *            Pressure trend
 	 * @param humid
 	 *            Humidity value
-	 * @param humidTrend
-	 *            Humidity trend
 	 */
 	static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
 	                            int appWidgetId,
-	                            float temp, String tempTrend,
-	                            float press, String pressTrend,
-	                            float humid, String humidTrend) {
+	                            float temp,
+	                            float press,
+	                            float humid) {
 
 		// Construct the RemoteViews object
 		/** View pointer to the widget */
@@ -181,8 +175,6 @@ public class WidgetValues extends AppWidgetProvider {
 			int[] tv_widgetRowValue = {R.id.tv_widgetRow1Value, R.id.tv_widgetRow2Value, R.id.tv_widgetRow3Value};
 			/** Array with widget IDs for value signs per row */
 			int[] tv_widgetRowSign = {R.id.tv_widgetRow1Sign, R.id.tv_widgetRow2Sign, R.id.tv_widgetRow3Sign};
-			/** Array with widget IDs for trends per row */
-			int[] tv_widgetRowTrend = {R.id.tv_widgetRow1Trend, R.id.tv_widgetRow2Trend, R.id.tv_widgetRow3Trend};
 			selectWValR[0] = wPrefs.getInt("wValueRow1"+numOfWidget,0);
 			selectWValR[1] = wPrefs.getInt("wValueRow2"+numOfWidget,0);
 			selectWValR[2] = wPrefs.getInt("wValueRow3"+numOfWidget,0);
@@ -193,7 +185,6 @@ public class WidgetValues extends AppWidgetProvider {
 				if (selectWtype < i) {
 					views.setViewVisibility(tv_widgetRowValue[i], View.GONE);
 					views.setViewVisibility(tv_widgetRowSign[i], View.GONE);
-					views.setViewVisibility(tv_widgetRowTrend[i], View.GONE);
 				}
 			}
 
@@ -202,22 +193,18 @@ public class WidgetValues extends AppWidgetProvider {
 					case 0:
 						views.setViewVisibility(tv_widgetRowValue[i], View.GONE);
 						views.setViewVisibility(tv_widgetRowSign[i], View.GONE);
-						views.setViewVisibility(tv_widgetRowTrend[i], View.GONE);
 						break;
 					case 1:
 						views.setTextViewText(tv_widgetRowValue[i], String.format("%.01f", Utils.cToU(temp, tempUnit)));
 						views.setTextViewText(tv_widgetRowSign[i], Utils.tempUnit(context, tempUnit));
-						views.setTextViewText(tv_widgetRowTrend[i], tempTrend);
 						break;
 					case 2:
 						views.setTextViewText(tv_widgetRowValue[i], String.format("%.01f", Utils.pToU(press, pressUnit)));
 						views.setTextViewText(tv_widgetRowSign[i], Utils.pressUnit(context, pressUnit));
-						views.setTextViewText(tv_widgetRowTrend[i], pressTrend);
 						break;
 					case 3:
 						views.setTextViewText(tv_widgetRowValue[i], String.format("%.01f", humid));
 						views.setTextViewText(tv_widgetRowSign[i], context.getString(R.string.humidSign));
-						views.setTextViewText(tv_widgetRowTrend[i], humidTrend);
 						break;
 				}
 			}
@@ -293,9 +280,9 @@ public class WidgetValues extends AppWidgetProvider {
 
 		for (int appWidgetId : appWidgetIds) {
 			WidgetValues.updateAppWidget(context, appWidgetManager, appWidgetId,
-					temp, "",
-					press, "",
-					humid, "");
+					temp,
+					press,
+					humid);
 		}
 	}
 }

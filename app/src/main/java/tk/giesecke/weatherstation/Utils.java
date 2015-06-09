@@ -425,7 +425,7 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 					numOfDayRecords++;
 					dayEntry.moveToLast();
 					timeStamps.add(dayEntry.getInt(0));
-					dayStamps.add(dayEntry.getInt(1));
+					dayStamps.add(dayEntry.getInt(2));
 					tempMaxEntries.add(Utils.cToU(dayEntry.getFloat(6), tempUnit));
 					tempMinEntries.add(Utils.cToU(dayEntry.getFloat(7), tempUnit));
 					tempEntries.add(Utils.cToU(dayEntry.getFloat(8), tempUnit));
@@ -436,6 +436,12 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 					humidMinEntries.add(dayEntry.getFloat(13));
 					humidEntries.add(dayEntry.getFloat(14));
 					dayEntry.close();
+				}
+				/** Converter value to change date number (1 => last , last => first) */
+				int converter = 0;
+				for (int i = numOfDayRecords-1; i >= 0; i--) {
+					dayStamps.set(i,dayStamps.get(i)-((numOfDayRecords-1)-(converter*2)));
+					converter++;
 				}
 			}
 			dataBase.close();
@@ -1458,5 +1464,48 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 				ivForecast.setImageDrawable(appActivity.getResources().getDrawable(R.mipmap.ic_sun));
 			}
 		}
+	}
+
+	/**
+	 * Get date and time and update station view.
+	 * Show forecast icon depending on current air pressure
+	 */
+	static String arrayTrend(ArrayList<Float> numArray) {
+		/** Trend as float number */
+		float fTrend;
+		/** Array list needed to calculate trend */
+		ArrayList<Integer> xArray = new ArrayList<>();
+		for (int i=0; i<numArray.size(); i++) {
+			xArray.add(i+1);
+		}
+		ArrayList<Float> xyArray = new ArrayList<>();
+		ArrayList<Integer> x2Array = new ArrayList<>();
+		for (int i = 0; i<numArray.size(); i++) {
+			xyArray.add(xArray.get(i)*numArray.get(i));
+			x2Array.add(xArray.get(i)*xArray.get(i));
+		}
+		float xyArraySum = 0;
+		int xArraySum = 0;
+		float yArraySum = 0;
+		int x2ArraySum = 0;
+		for (int i = 0; i<numArray.size(); i++) {
+			xyArraySum += xyArray.get(i);
+			xArraySum += xArray.get(i);
+			yArraySum += numArray.get(i);
+			x2ArraySum += (x2Array.get(i) * x2Array.get(i));
+		}
+		fTrend = ((numArray.size()*xyArraySum)-(xArraySum*yArraySum)) /
+				((numArray.size()*(float)x2ArraySum)-(xArraySum*xArraySum));
+
+/*		for (int i=0; i<numArray.size()-1; i++) {
+			fTrend = fTrend + ((numArray.get(i+1)-numArray.get(i))/numArray.get(i));
+		}
+		fTrend = fTrend/numArray.size();
+*/		if (fTrend > 0f) {
+			return appContext.getString(R.string.upTendency);
+		} else if (fTrend < 0f) {
+			return appContext.getString(R.string.downTendency);
+		}
+		return appContext.getString(R.string.straightTendency);
 	}
 }

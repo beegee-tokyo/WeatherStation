@@ -254,9 +254,9 @@ public class WidgetValuesConfigure extends Activity {
 					// It is the responsibility of the configuration activity to update the app widget
 					AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 					WidgetValues.updateAppWidget(context, appWidgetManager, mAppWidgetId,
-							0, "",
-							0, "",
-							0, "");
+							0,
+							0,
+							0);
 
 					// Start alarm to update the widget in the requested interval
 					/** Update interval in ms */

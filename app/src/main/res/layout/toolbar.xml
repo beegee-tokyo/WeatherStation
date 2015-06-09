@@ -3,7 +3,7 @@
                                           android:id="@+id/toolbar"
                                           style="?myToolBar"
                                           android:layout_width="match_parent"
-                                          android:layout_height="wrap_content">
+                                          android:layout_height="30dp">
 
     <RelativeLayout
         style="?myToolBar"
@@ -14,19 +14,20 @@
         <ImageButton
             android:id="@+id/b_tb_up"
             style="?myToolBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:clickable="true"
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/ic_action_back"
             android:contentDescription="@string/app_name"
             android:onClick="onClick"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:scaleType="centerCrop"/>
 
         <ImageButton
             android:id="@+id/b_last"
             style="?myToolBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:clickable="true"
             android:src="?attr/ic_last_icon"
             android:contentDescription="@string/app_name"
@@ -37,13 +38,14 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:scaleType="centerCrop"/>
 
         <ImageButton
             android:id="@+id/b_next"
             style="?myToolBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:clickable="true"
             android:src="?attr/ic_next_icon"
             android:contentDescription="@string/app_name"
@@ -54,13 +56,14 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:scaleType="centerCrop"/>
 
         <ImageButton
             android:id="@+id/b_month_view"
             style="?myToolBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:clickable="true"
             android:src="?attr/ic_month_view_icon"
             android:contentDescription="@string/app_name"
@@ -70,13 +73,14 @@
             android:layout_toStartOf="@+id/b_day_view"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"/>
+            android:layout_marginRight="5dp"
+            android:scaleType="centerCrop"/>
 
         <ImageButton
             android:id="@+id/b_day_view"
             style="?myToolBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:clickable="true"
             android:src="?attr/ic_day_view_icon"
             android:contentDescription="@string/app_name"
@@ -86,13 +90,14 @@
             android:layout_toStartOf="@+id/b_infinite"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"/>
+            android:layout_marginRight="5dp"
+            android:scaleType="centerCrop"/>
 
         <ImageButton
             android:id="@+id/b_infinite"
             style="?myToolBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:clickable="true"
             android:src="?attr/ic_infinite_icon"
             android:contentDescription="@string/app_name"
@@ -102,7 +107,8 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"/>
+            android:layout_marginRight="5dp"
+            android:scaleType="centerCrop"/>
 
     </RelativeLayout>
 

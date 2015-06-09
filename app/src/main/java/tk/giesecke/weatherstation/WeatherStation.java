@@ -124,10 +124,10 @@ public class WeatherStation extends ActionBarActivity implements
     /** Bright color of selected theme */
     static int colorBright;
 	/** Color of status bar when in vintage view */
-	private static int colorStatusVintage;
+	public static int colorStatusVintage;
 	/** Color of status bar when in station view */
 	private static int colorStatusStation;
-	/** Bright color of selected theme */
+	/** Color of toolbar background */
 	private static Drawable toolBarDrawable;
 
 	/** SensorManager to get info about available sensors */
@@ -174,11 +174,11 @@ public class WeatherStation extends ActionBarActivity implements
 	private TextView tvTodayMinHumid;
 
 	/** Last measured temperature for tendency detection */
-	private float lastTemp;
+	private ArrayList<Float> lastTempArr = new ArrayList<>();
 	/** Last measured pressure for tendency detection */
-	private float lastPress;
+	private ArrayList<Float> lastPressArr = new ArrayList<>();
 	/** Last measured humidity for tendency detection */
-	private float lastHumid;
+	private ArrayList<Float> lastHumidArr = new ArrayList<>();
 
 	/** Number of plot y values */
     private static int plotValues = 20;
@@ -326,6 +326,8 @@ public class WeatherStation extends ActionBarActivity implements
 		Toolbar actionBar = (Toolbar) findViewById(R.id.toolbar);
 		if (actionBar != null) {
 			setSupportActionBar(actionBar);
+			actionBar.setMinimumHeight(90);
+			actionBar.setBackground(toolBarDrawable);
 		}
 
 		mTitle = mDrawerTitle = getTitle();
@@ -374,9 +376,16 @@ public class WeatherStation extends ActionBarActivity implements
 				RelativeLayout vintageLayout = (RelativeLayout) findViewById(R.id.vintage);
 				/** Layout for station view */
 				RelativeLayout stationLayout = (RelativeLayout) findViewById(R.id.station);
+				/** Main layout view */
+				LinearLayout llMain = (LinearLayout) findViewById(R.id.ll_main);
 				if (swipeType == SwipeDetector.SwipeTypeEnum.LEFT_TO_RIGHT) {
 					switch (uiLayout) {
 						case 0:
+							/** Image button to jump to previous or next day */
+							ImageButton b_nav = (ImageButton) findViewById(R.id.b_next);
+							b_nav.setVisibility(View.GONE);
+							b_nav = (ImageButton) findViewById(R.id.b_last);
+							b_nav.setVisibility(View.GONE);
 							plotLayout.setVisibility(View.GONE);
 							vintageLayout.setVisibility(View.VISIBLE);
 							findViewById(R.id.b_infinite).setVisibility(View.GONE);
@@ -387,6 +396,7 @@ public class WeatherStation extends ActionBarActivity implements
 							if (android.os.Build.VERSION.SDK_INT >= 21) {
 								getWindow().setStatusBarColor(colorStatusVintage);
 							}
+							llMain.setBackgroundColor(colorStatusVintage);//
 							uiLayout = 1;
 							break;
 						case 1:
@@ -397,9 +407,17 @@ public class WeatherStation extends ActionBarActivity implements
 							if (android.os.Build.VERSION.SDK_INT >= 21) {
 								getWindow().setStatusBarColor(colorStatusStation);
 							}
+							llMain.setBackgroundColor(colorStatusStation);
 							uiLayout = 2;
 							break;
 						case 2:
+							if (plotValues == 24) {
+								/** Image button to jump to previous or next day */
+								b_nav = (ImageButton) findViewById(R.id.b_next);
+								b_nav.setVisibility(View.VISIBLE);
+								b_nav = (ImageButton) findViewById(R.id.b_last);
+								b_nav.setVisibility(View.VISIBLE);
+							}
 							stationLayout.setVisibility(View.GONE);
 							plotLayout.setVisibility(View.VISIBLE);
 							findViewById(R.id.b_infinite).setVisibility(View.VISIBLE);
@@ -410,6 +428,7 @@ public class WeatherStation extends ActionBarActivity implements
 							if (android.os.Build.VERSION.SDK_INT >= 21) {
 								getWindow().setStatusBarColor(colorDark);
 							}
+							llMain.setBackgroundColor(colorBright);
 							uiLayout = 0;
 							break;
 					}
@@ -417,6 +436,11 @@ public class WeatherStation extends ActionBarActivity implements
 				} else if (swipeType == SwipeDetector.SwipeTypeEnum.RIGHT_TO_LEFT) {
 					switch (uiLayout) {
 						case 0:
+							/** Image button to jump to previous or next day */
+							ImageButton b_nav = (ImageButton) findViewById(R.id.b_next);
+							b_nav.setVisibility(View.GONE);
+							b_nav = (ImageButton) findViewById(R.id.b_last);
+							b_nav.setVisibility(View.GONE);
 							plotLayout.setVisibility(View.GONE);
 							stationLayout.setVisibility(View.VISIBLE);
 							findViewById(R.id.b_infinite).setVisibility(View.GONE);
@@ -427,6 +451,7 @@ public class WeatherStation extends ActionBarActivity implements
 							if (android.os.Build.VERSION.SDK_INT >= 21) {
 								getWindow().setStatusBarColor(colorStatusStation);
 							}
+							llMain.setBackgroundColor(colorStatusStation);
 							uiLayout = 2;
 							break;
 						case 2:
@@ -437,9 +462,17 @@ public class WeatherStation extends ActionBarActivity implements
 							if (android.os.Build.VERSION.SDK_INT >= 21) {
 								getWindow().setStatusBarColor(colorStatusVintage);
 							}
+							llMain.setBackgroundColor(colorStatusVintage);
 							uiLayout = 1;
 							break;
 						case 1:
+							if (plotValues == 24) {
+								/** Image button to jump to previous or next day */
+								b_nav = (ImageButton) findViewById(R.id.b_next);
+								b_nav.setVisibility(View.VISIBLE);
+								b_nav = (ImageButton) findViewById(R.id.b_last);
+								b_nav.setVisibility(View.VISIBLE);
+							}
 							vintageLayout.setVisibility(View.GONE);
 							plotLayout.setVisibility(View.VISIBLE);
 							findViewById(R.id.b_infinite).setVisibility(View.VISIBLE);
@@ -450,6 +483,7 @@ public class WeatherStation extends ActionBarActivity implements
 							if (android.os.Build.VERSION.SDK_INT >= 21) {
 								getWindow().setStatusBarColor(colorDark);
 							}
+							llMain.setBackgroundColor(colorBright);
 							uiLayout = 0;
 							break;
 					}
@@ -457,58 +491,7 @@ public class WeatherStation extends ActionBarActivity implements
 				}
 			}
 		});
-		// Register listener for up & down swipes in the main layout
-/*		new SwipeDetector(mDrawerLayout).setOnSwipeListener(new SwipeDetector.onSwipeEvent() {
-			@Override
-			public void SwipeEventDetected(SwipeDetector.SwipeTypeEnum swipeType) {
-				if (swipeType == SwipeDetector.SwipeTypeEnum.LEFT_TO_RIGHT ||
-						swipeType == SwipeDetector.SwipeTypeEnum.RIGHT_TO_LEFT) {
-					return;
-				}
-				ImageButton b_nav;
-				if (swipeType == SwipeDetector.SwipeTypeEnum.TOP_TO_BOTTOM &&
-						uiLayout == 0 && !isContinuous && plotValues == 24) {
-					if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Next day view");
-					if (dayToShow > 1) {
-						dayToShow--;
-						Utils.clearCharts();
-						Utils.initCharts(false, true, dayToShow, appActivity);
-						tempLevelsPlot.redraw();
-						pressLevelsPlot.redraw();
-						humidLevelsPlot.redraw();
-						if (dayToShow == 1) {
-							b_nav = (ImageButton) findViewById(R.id.b_next);
-							b_nav.setVisibility(View.GONE);
-						}
-						if (numOfDayRecords != 1) {
-							b_nav = (ImageButton) findViewById(R.id.b_last);
-							b_nav.setVisibility(View.VISIBLE);
-						}
-					}
-				} else if (swipeType == SwipeDetector.SwipeTypeEnum.BOTTOM_TO_TOP &&
-						uiLayout == 0 && !isContinuous && plotValues == 24) {
-					if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Previous day view");
-					//numOfDayRecords = DataHolder.sizeOfDayEntry();
-					if (dayToShow < numOfDayRecords) {
-						dayToShow++;
-						Utils.clearCharts();
-						Utils.initCharts(false, true, dayToShow, appActivity);
-						tempLevelsPlot.redraw();
-						pressLevelsPlot.redraw();
-						humidLevelsPlot.redraw();
-						if (dayToShow != 1) {
-							b_nav = (ImageButton) findViewById(R.id.b_next);
-							b_nav.setVisibility(View.VISIBLE);
-						}
-						if (dayToShow == numOfDayRecords) {
-							b_nav = (ImageButton) findViewById(R.id.b_last);
-							b_nav.setVisibility(View.GONE);
-						}
-					}
-				}
-			}
-		});
-*/
+
 		// Prepare views of weather values
 		tvCurrTempPlot = (TextView) findViewById(R.id.tvCurrTempPlot);
 		tvCurrTempVintage = (TextView) findViewById(R.id.tvCurrTempVintage);
@@ -617,6 +600,8 @@ public class WeatherStation extends ActionBarActivity implements
 		RelativeLayout vintageLayout = (RelativeLayout)findViewById(R.id.vintage);
 		/** Layout for station view */
 		RelativeLayout stationLayout = (RelativeLayout)findViewById(R.id.station);
+		/** Main layout view */
+		LinearLayout llMain = (LinearLayout) findViewById(R.id.ll_main);
 		switch (uiLayout) {
 			case 0: // Plot view
 				vintageLayout.setVisibility(View.GONE);
@@ -638,6 +623,7 @@ public class WeatherStation extends ActionBarActivity implements
 				if (android.os.Build.VERSION.SDK_INT >= 21) {
 					getWindow().setStatusBarColor(colorStatusVintage);
 				}
+				llMain.setBackgroundColor(colorStatusVintage);
 				break;
 			case 2: // Station view
 				modernLayout.setVisibility(View.GONE);
@@ -651,6 +637,7 @@ public class WeatherStation extends ActionBarActivity implements
 				if (android.os.Build.VERSION.SDK_INT >= 21) {
 					getWindow().setStatusBarColor(colorStatusStation);
 				}
+				llMain.setBackgroundColor(colorStatusStation);
 				break;
 		}
 
@@ -658,7 +645,6 @@ public class WeatherStation extends ActionBarActivity implements
 
 		tempUnit = mPrefs.getInt("temp_unit", 0);
 		pressUnit = mPrefs.getInt("press_unit", 0);
-		lastTemp = lastPress = lastHumid = 0f;
 
 		Utils.initCharts(true, true, 1, this); // continuous, day view, view today
 
@@ -740,10 +726,12 @@ public class WeatherStation extends ActionBarActivity implements
 		if (mHumidSensor != null) {
 			mSensorManager.unregisterListener(this, mHumidSensor);
 		}
-		WidgetValues.forceUpdate(this,
-				lastTemp,
-				lastPress,
-				lastHumid);
+		if (lastTempArr.size() != 0) {
+			WidgetValues.forceUpdate(this,
+					lastTempArr.get(lastTempArr.size()-1),
+					lastPressArr.get(lastPressArr.size()-1),
+					lastHumidArr.get(lastHumidArr.size()-1));
+		}
 	}
 
 	@Override
@@ -1406,15 +1394,13 @@ public class WeatherStation extends ActionBarActivity implements
 
 			/** String for tendency */
 			String tendency = getString(R.string.straightTendency);
-
-			if (lastTemp != 0f) {
-				if (Math.round(lastTempValue) > Math.round(lastTemp)) {
-					tendency = getString(R.string.upTendency);
-				} else if (Math.round(lastTempValue) < Math.round(lastTemp)) {
-					tendency = getString(R.string.downTendency);
-				}
+			lastTempArr.add(lastTempValue);
+			if (lastTempArr.size() > 20) {
+				lastTempArr.remove(0);
 			}
-			lastTemp = lastTempValue;
+			if (lastTempArr.size() > 1) {
+				tendency = Utils.arrayTrend(lastTempArr);
+			}
 			lastTempValue = Utils.cToU(lastTempValue, tempUnit);
 			// update temperature plot
 			tvCurrTempPlot.setText(String.format("%.01f",
@@ -1451,14 +1437,13 @@ public class WeatherStation extends ActionBarActivity implements
 
 			// update pressure plot
 			tendency = getString(R.string.straightTendency);
-			if (lastPress != 0f) {
-				if (Math.round(lastPressValue) > Math.round(lastPress)) {
-					tendency = getString(R.string.upTendency);
-				} else if (Math.round(lastPressValue) < Math.round(lastPress)) {
-					tendency = getString(R.string.downTendency);
-				}
+			lastPressArr.add(lastPressValue);
+			if (lastPressArr.size() > 20) {
+				lastPressArr.remove(0);
 			}
-			lastPress = lastPressValue;
+			if (lastPressArr.size() > 1) {
+				tendency = Utils.arrayTrend(lastPressArr);
+			}
 			lastPressValue = Utils.pToU(lastPressValue, pressUnit);
 			/** Padding for top and bottom of the plot depending on user selected unit */
 			float plotPadding = Utils.pressBoundary(pressUnit);
@@ -1495,14 +1480,14 @@ public class WeatherStation extends ActionBarActivity implements
 			}
 
 			// update humidity plot
-			if (lastHumid != 0f) {
-				if (Math.round(lastHumidValue) > Math.round(lastHumid)) {
-					tendency = getString(R.string.upTendency);
-				} else if (Math.round(lastHumidValue) < Math.round(lastHumid)) {
-					tendency = getString(R.string.downTendency);
-				}
+			tendency = getString(R.string.straightTendency);
+			lastHumidArr.add(lastHumidValue);
+			if (lastHumidArr.size() > 20) {
+				lastHumidArr.remove(0);
 			}
-			lastHumid = lastHumidValue;
+			if (lastHumidArr.size() > 1) {
+				tendency = Utils.arrayTrend(lastHumidArr);
+			}
 			tvCurrHumidPlot.setText(String.format("%.01f",
 					lastHumidValue) + getString(R.string.humidSign) + tendency);
 			tvCurrHumidVintage.setText(String.format("%.01f",

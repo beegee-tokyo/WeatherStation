@@ -160,47 +160,33 @@ public class BGService extends Service implements SensorEventListener {
 					+" lastPressValue = "+lastPressValue
 					+" lastHumidValue = "+lastHumidValue);
 
-			if (currTime[0] != 0) { // It is not 12am or 0h so we try to save the record
-				/** Flag for addDayToDB success or failure */
-				boolean result = addDayToDB(currTime[0], currTime[1], lastTempValue, lastPressValue, lastHumidValue);
-				if (result) {
-					if (mTempSensor != null) {
-						mSensorManager.unregisterListener(this, mTempSensor);
-					}
-					if (mPressSensor != null) {
-						mSensorManager.unregisterListener(this, mPressSensor);
-					}
-					if (mHumidSensor != null) {
-						mSensorManager.unregisterListener(this, mHumidSensor);
-					}
-					stopSelf();
-				} else {
-					// retry until retry counter reaches 20
-					lastTempValue = lastPressValue = lastHumidValue = -9999;
-					if (retryCounter++ == 20) {
-						if (mTempSensor != null) {
-							mSensorManager.unregisterListener(this, mTempSensor);
-						}
-						if (mPressSensor != null) {
-							mSensorManager.unregisterListener(this, mPressSensor);
-						}
-						if (mHumidSensor != null) {
-							mSensorManager.unregisterListener(this, mHumidSensor);
-						}
-						stopSelf();
-					}
-				}
-			} else { // it is 12am or 0h, so we shift the recorded days and then try to save the records
+			if (currTime[0] == 0) { // it is 12am or 0h, so we shift the recorded days and then try to save the records
 				if (!isShiftDone) { // We did not yet the shift of recorded days
 					wsDbHelper = new WSDatabaseHelper(this);
 					dataBase = wsDbHelper.getWritableDatabase();
 					wsDbHelper.shiftDays(dataBase);
 					dataBase.close();
 					wsDbHelper.close();
+					isShiftDone = true;
 				}
-				/** Flag for addDayToDB success or failure */
-				boolean result = addDayToDB(currTime[0], currTime[1], lastTempValue, lastPressValue, lastHumidValue);
-				if (result) {
+			}
+			/** Flag for addDayToDB success or failure */
+			boolean result = addDayToDB(currTime[0], currTime[1], lastTempValue, lastPressValue, lastHumidValue);
+			if (result) {
+				if (mTempSensor != null) {
+					mSensorManager.unregisterListener(this, mTempSensor);
+				}
+				if (mPressSensor != null) {
+					mSensorManager.unregisterListener(this, mPressSensor);
+				}
+				if (mHumidSensor != null) {
+					mSensorManager.unregisterListener(this, mHumidSensor);
+				}
+				stopSelf();
+			} else {
+				// retry until retry counter reaches 20
+				lastTempValue = lastPressValue = lastHumidValue = -9999;
+				if (retryCounter++ == 20) {
 					if (mTempSensor != null) {
 						mSensorManager.unregisterListener(this, mTempSensor);
 					}
@@ -211,21 +197,6 @@ public class BGService extends Service implements SensorEventListener {
 						mSensorManager.unregisterListener(this, mHumidSensor);
 					}
 					stopSelf();
-				} else {
-					// retry until retry counter reaches 20
-					lastTempValue = lastPressValue = lastHumidValue = -9999;
-					if (retryCounter++ == 20) {
-						if (mTempSensor != null) {
-							mSensorManager.unregisterListener(this, mTempSensor);
-						}
-						if (mPressSensor != null) {
-							mSensorManager.unregisterListener(this, mPressSensor);
-						}
-						if (mHumidSensor != null) {
-							mSensorManager.unregisterListener(this, mHumidSensor);
-						}
-						stopSelf();
-					}
 				}
 			}
 		}

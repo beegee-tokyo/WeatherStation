@@ -9,7 +9,8 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/llWrow1">
+        android:id="@+id/llWrow1"
+        android:layout_centerHorizontal="true">
 
         <TextView
             android:layout_width="wrap_content"
@@ -29,15 +30,6 @@
             android:textColor="@android:color/black"
             android:layout_margin="2dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/upTendency"
-            android:id="@+id/tv_widgetRow1Trend"
-            android:textColor="@android:color/black"
-            android:layout_margin="2dp"/>
-
     </LinearLayout>
 
     <LinearLayout
@@ -45,7 +37,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/llWrow2"
-        android:layout_below="@+id/llWrow1">
+        android:layout_below="@+id/llWrow1"
+        android:layout_centerHorizontal="true">
 
         <TextView
             android:layout_width="wrap_content"
@@ -65,15 +58,6 @@
             android:textColor="@android:color/black"
             android:layout_margin="2dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/straightTendency"
-            android:id="@+id/tv_widgetRow2Trend"
-            android:textColor="@android:color/black"
-            android:layout_margin="2dp"/>
-
     </LinearLayout>
 
     <LinearLayout
@@ -81,7 +65,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/llWrow3"
-        android:layout_below="@+id/llWrow2">
+        android:layout_below="@+id/llWrow2"
+        android:layout_centerHorizontal="true">
 
         <TextView
             android:layout_width="wrap_content"
@@ -98,15 +83,6 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/tempSignK"
             android:id="@+id/tv_widgetRow3Sign"
-            android:textColor="@android:color/black"
-            android:layout_margin="2dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/downTendency"
-            android:id="@+id/tv_widgetRow3Trend"
             android:textColor="@android:color/black"
             android:layout_margin="2dp"/>
 

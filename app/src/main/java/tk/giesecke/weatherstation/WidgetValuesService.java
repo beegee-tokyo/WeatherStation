@@ -3,7 +3,6 @@ package tk.giesecke.weatherstation;
 import android.app.IntentService;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -54,36 +53,6 @@ public class WidgetValuesService extends IntentService implements SensorEventLis
 	protected void onHandleIntent(Intent intent) {
 		if (BuildConfig.DEBUG) Log.d(LOG_TAG, "onHandleIntent");
 
-		// preset values
-		lastTempValue = 0;
-		lastPressValue = 0;
-		lastHumidValue = 0;
-
-		// connect to temperature sensor
-		mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-		// connect to temperature sensor
-		/* Access to temp sensor */
-		mTempSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-		// connect to air pressure sensor
-		/* Access to pressure sensor */
-		mPressSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-		// connect to humidity sensor
-		/* Access to humidity sensor */
-		mHumidSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
-
-		if (mTempSensor != null) {
-			mSensorManager.registerListener(this, mTempSensor, SensorManager.SENSOR_DELAY_FASTEST);
-			lastTempValue = -9999;
-		}
-		if (mPressSensor != null) {
-			mSensorManager.registerListener(this, mPressSensor, SensorManager.SENSOR_DELAY_FASTEST);
-			lastPressValue = -9999;
-		}
-		if (mHumidSensor != null) {
-			mSensorManager.registerListener(this, mHumidSensor, SensorManager.SENSOR_DELAY_FASTEST);
-			lastHumidValue = -9999;
-		}
-
 		/** App widget manager for all widgets of this app */
 		appWidgetManager = AppWidgetManager.getInstance(this);
 
@@ -99,6 +68,37 @@ public class WidgetValuesService extends IntentService implements SensorEventLis
 				if (BuildConfig.DEBUG)
 					Log.d(LOG_TAG, "appWidgetIds[" + i + "] = " + appWidgetIds[i]);
 			}
+			// preset values
+			lastTempValue = 0;
+			lastPressValue = 0;
+			lastHumidValue = 0;
+
+			// connect to temperature sensor
+			mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+			// connect to temperature sensor
+			/* Access to temp sensor */
+			mTempSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+			// connect to air pressure sensor
+			/* Access to pressure sensor */
+			mPressSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+			// connect to humidity sensor
+			/* Access to humidity sensor */
+			mHumidSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+
+			if (mTempSensor != null) {
+				mSensorManager.registerListener(this, mTempSensor, SensorManager.SENSOR_DELAY_FASTEST);
+				lastTempValue = -9999;
+			}
+			if (mPressSensor != null) {
+				mSensorManager.registerListener(this, mPressSensor, SensorManager.SENSOR_DELAY_FASTEST);
+				lastPressValue = -9999;
+			}
+			if (mHumidSensor != null) {
+				mSensorManager.registerListener(this, mHumidSensor, SensorManager.SENSOR_DELAY_FASTEST);
+				lastHumidValue = -9999;
+			}
+		} else { // Somethings terrible wrong here, this should not be called when numWidgets is 0
+			if (BuildConfig.DEBUG) Log.d(LOG_TAG, "numWidgets = " + numWidgets);
 		}
 	}
 
@@ -141,51 +141,13 @@ public class WidgetValuesService extends IntentService implements SensorEventLis
 		{
 			if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Widget update ready");
 
-			/** Access to shared preferences of the app widgets */
-			SharedPreferences wPrefs = getApplicationContext().getSharedPreferences("WidgetValues", 0);
-			/* Last measured temperature for tendency detection */
-			float lastTemp = wPrefs.getFloat("wLastTemp", 0);
-			/* Last measured pressure for tendency detection */
-			float lastPress = wPrefs.getFloat("wLastPress", 0);
-			/* Last measured humidity for tendency detection */
-			float lastHumid = wPrefs.getFloat("wLastHumid", 0);
-
-			/** String for temperature trend */
-			String tempTrend = getString(R.string.straightTendency);
-			if (lastTemp != 0f) {
-				if (Math.round(lastTempValue) > Math.round(lastTemp)) {
-					tempTrend = getString(R.string.upTendency);
-				} else if (Math.round(lastTempValue) < Math.round(lastTemp)) {
-					tempTrend = getString(R.string.downTendency);
+			if (appWidgetIds.length != 0) {
+				for (int appWidgetId : appWidgetIds) {
+					WidgetValues.updateAppWidget(getApplicationContext(), appWidgetManager, appWidgetId,
+							lastTempValue,
+							lastPressValue,
+							lastHumidValue);
 				}
-			}
-			wPrefs.edit().putFloat("wLastTemp",lastTempValue).apply();
-			/** String for pressure trend */
-			String pressTrend = getString(R.string.straightTendency);
-			if (lastPress != 0f) {
-				if (Math.round(lastPressValue) > Math.round(lastPress)) {
-					pressTrend = getString(R.string.upTendency);
-				} else if (Math.round(lastPressValue) < Math.round(lastPress)) {
-					pressTrend = getString(R.string.downTendency);
-				}
-			}
-			wPrefs.edit().putFloat("wLastPress", lastPressValue).apply();
-			/** String for humidity trend */
-			String humidTrend = getString(R.string.straightTendency);
-			if (lastHumid != 0f) {
-				if (Math.round(lastHumidValue) > Math.round(lastHumid)) {
-					humidTrend = getString(R.string.upTendency);
-				} else if (Math.round(lastHumidValue) < Math.round(lastHumid)) {
-					humidTrend = getString(R.string.downTendency);
-				}
-			}
-			wPrefs.edit().putFloat("wLastHumid", lastHumidValue).apply();
-
-			for (int appWidgetId : appWidgetIds) {
-				WidgetValues.updateAppWidget(getApplicationContext(), appWidgetManager, appWidgetId,
-						lastTempValue, tempTrend,
-						lastPressValue, pressTrend,
-						lastHumidValue, humidTrend);
 			}
 
 			if (mTempSensor != null) {

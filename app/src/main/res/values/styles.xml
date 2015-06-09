@@ -19,6 +19,7 @@
         <item name="android:displayOptions">useLogo|showHome</item>
         <item name="myToolBar">@style/myBlueToolBar</item>
         <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
+        <item name="actionBarStyle">@style/MyActionBarTheme</item>
         <item name="background">@android:color/holo_blue_dark</item>
         <item name="ic_infinite_icon" >@drawable/ic_infinite</item>
         <item name="ic_day_view_icon" >@drawable/ic_day_view</item>
@@ -44,6 +45,7 @@
         <item name="android:displayOptions">useLogo|showHome</item>
         <item name="myToolBar">@style/myGrayToolBar</item>
         <item name="android:actionBarStyle">@style/MyActionBarThemeGray</item>
+        <item name="actionBarStyle">@style/MyActionBarThemeGray</item>
         <item name="background">@android:color/darker_gray</item>
         <item name="ic_infinite_icon" >@drawable/ic_infinite</item>
         <item name="ic_day_view_icon" >@drawable/ic_day_view</item>
@@ -69,6 +71,7 @@
         <item name="android:displayOptions">useLogo|showHome</item>
         <item name="myToolBar">@style/myGreenToolBar</item>
         <item name="android:actionBarStyle">@style/MyActionBarThemeGreen</item>
+        <item name="actionBarStyle">@style/MyActionBarThemeGreen</item>
         <item name="background">@android:color/holo_green_dark</item>
         <item name="ic_infinite_icon" >@drawable/ic_infinite</item>
         <item name="ic_day_view_icon" >@drawable/ic_day_view</item>
@@ -94,6 +97,7 @@
         <item name="android:displayOptions">useLogo|showHome</item>
         <item name="myToolBar">@style/myOrangeToolBar</item>
         <item name="android:actionBarStyle">@style/MyActionBarThemeOrange</item>
+        <item name="actionBarStyle">@style/MyActionBarThemeOrange</item>
         <item name="background">@android:color/holo_orange_dark</item>
         <item name="ic_infinite_icon" >@drawable/ic_infinite</item>
         <item name="ic_day_view_icon" >@drawable/ic_day_view</item>
@@ -119,6 +123,7 @@
         <item name="android:displayOptions">useLogo|showHome</item>
         <item name="myToolBar">@style/myRedToolBar</item>
         <item name="android:actionBarStyle">@style/MyActionBarThemeRed</item>
+        <item name="actionBarStyle">@style/MyActionBarThemeRed</item>
         <item name="background">@android:color/holo_red_dark</item>
         <item name="ic_infinite_icon" >@drawable/ic_infinite</item>
         <item name="ic_day_view_icon" >@drawable/ic_day_view</item>
@@ -144,6 +149,7 @@
         <item name="android:displayOptions">useLogo|showHome</item>
         <item name="myToolBar">@style/myWhiteToolBar</item>
         <item name="android:actionBarStyle">@style/MyActionBarThemeWhite</item>
+        <item name="actionBarStyle">@style/MyActionBarThemeWhite</item>
         <item name="background">@color/my_white_dark</item>
         <item name="ic_infinite_icon" >@drawable/ic_infinite_dark</item>
         <item name="ic_day_view_icon" >@drawable/ic_day_view_dark</item>
