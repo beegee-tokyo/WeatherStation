@@ -62,7 +62,7 @@ public class WeatherStation extends ActionBarActivity implements
 		View.OnClickListener, SensorEventListener, AdapterView.OnItemClickListener {
 
 	/** Debug tag */
-	private static final String LOG_TAG = "WeatherStation";
+	public static final String LOG_TAG = "WeatherStation";
     /** Application context */
     public static Context appContext;
 	/** Application context */
@@ -121,8 +121,8 @@ public class WeatherStation extends ActionBarActivity implements
 
 	/** Dark color of selected theme */
 	static int colorDark;
-    /** Bright color of selected theme */
-    static int colorBright;
+	/** Bright color of selected theme */
+	static int colorBright;
 	/** Color of status bar when in vintage view */
 	public static int colorStatusVintage;
 	/** Color of status bar when in station view */
@@ -381,16 +381,9 @@ public class WeatherStation extends ActionBarActivity implements
 				if (swipeType == SwipeDetector.SwipeTypeEnum.LEFT_TO_RIGHT) {
 					switch (uiLayout) {
 						case 0:
-							/** Image button to jump to previous or next day */
-							ImageButton b_nav = (ImageButton) findViewById(R.id.b_next);
-							b_nav.setVisibility(View.GONE);
-							b_nav = (ImageButton) findViewById(R.id.b_last);
-							b_nav.setVisibility(View.GONE);
+							findViewById(R.id.rl_toolbar).setVisibility(View.INVISIBLE);
 							plotLayout.setVisibility(View.GONE);
 							vintageLayout.setVisibility(View.VISIBLE);
-							findViewById(R.id.b_infinite).setVisibility(View.GONE);
-							findViewById(R.id.b_day_view).setVisibility(View.GONE);
-							findViewById(R.id.b_month_view).setVisibility(View.GONE);
 							getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.color.my_gold_brown));
 							findViewById(R.id.b_tb_up).setBackground(getResources().getDrawable(R.color.my_gold_brown));
 							if (android.os.Build.VERSION.SDK_INT >= 21) {
@@ -411,18 +404,16 @@ public class WeatherStation extends ActionBarActivity implements
 							uiLayout = 2;
 							break;
 						case 2:
+							findViewById(R.id.rl_toolbar).setVisibility(View.VISIBLE);
 							if (plotValues == 24) {
 								/** Image button to jump to previous or next day */
-								b_nav = (ImageButton) findViewById(R.id.b_next);
+								ImageButton b_nav = (ImageButton) findViewById(R.id.b_next);
 								b_nav.setVisibility(View.VISIBLE);
 								b_nav = (ImageButton) findViewById(R.id.b_last);
 								b_nav.setVisibility(View.VISIBLE);
 							}
 							stationLayout.setVisibility(View.GONE);
 							plotLayout.setVisibility(View.VISIBLE);
-							findViewById(R.id.b_infinite).setVisibility(View.VISIBLE);
-							findViewById(R.id.b_day_view).setVisibility(View.VISIBLE);
-							findViewById(R.id.b_month_view).setVisibility(View.VISIBLE);
 							getSupportActionBar().setBackgroundDrawable(toolBarDrawable);
 							findViewById(R.id.b_tb_up).setBackground(toolBarDrawable);
 							if (android.os.Build.VERSION.SDK_INT >= 21) {
@@ -436,16 +427,9 @@ public class WeatherStation extends ActionBarActivity implements
 				} else if (swipeType == SwipeDetector.SwipeTypeEnum.RIGHT_TO_LEFT) {
 					switch (uiLayout) {
 						case 0:
-							/** Image button to jump to previous or next day */
-							ImageButton b_nav = (ImageButton) findViewById(R.id.b_next);
-							b_nav.setVisibility(View.GONE);
-							b_nav = (ImageButton) findViewById(R.id.b_last);
-							b_nav.setVisibility(View.GONE);
+							findViewById(R.id.rl_toolbar).setVisibility(View.INVISIBLE);
 							plotLayout.setVisibility(View.GONE);
 							stationLayout.setVisibility(View.VISIBLE);
-							findViewById(R.id.b_infinite).setVisibility(View.GONE);
-							findViewById(R.id.b_day_view).setVisibility(View.GONE);
-							findViewById(R.id.b_month_view).setVisibility(View.GONE);
 							getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.color.my_gray_bright));
 							findViewById(R.id.b_tb_up).setBackground(getResources().getDrawable(R.color.my_gray_bright));
 							if (android.os.Build.VERSION.SDK_INT >= 21) {
@@ -466,18 +450,16 @@ public class WeatherStation extends ActionBarActivity implements
 							uiLayout = 1;
 							break;
 						case 1:
+							findViewById(R.id.rl_toolbar).setVisibility(View.VISIBLE);
 							if (plotValues == 24) {
 								/** Image button to jump to previous or next day */
-								b_nav = (ImageButton) findViewById(R.id.b_next);
+								ImageButton b_nav = (ImageButton) findViewById(R.id.b_next);
 								b_nav.setVisibility(View.VISIBLE);
 								b_nav = (ImageButton) findViewById(R.id.b_last);
 								b_nav.setVisibility(View.VISIBLE);
 							}
 							vintageLayout.setVisibility(View.GONE);
 							plotLayout.setVisibility(View.VISIBLE);
-							findViewById(R.id.b_infinite).setVisibility(View.VISIBLE);
-							findViewById(R.id.b_day_view).setVisibility(View.VISIBLE);
-							findViewById(R.id.b_month_view).setVisibility(View.VISIBLE);
 							getSupportActionBar().setBackgroundDrawable(toolBarDrawable);
 							findViewById(R.id.b_tb_up).setBackground(toolBarDrawable);
 							if (android.os.Build.VERSION.SDK_INT >= 21) {
@@ -556,39 +538,31 @@ public class WeatherStation extends ActionBarActivity implements
 			tvCurrTempPlot.setText(getString(R.string.sensorNotAvail));
 			tvCurrTempVintage.setText(getString(R.string.sensorNotAvail));
 			tvCurrTempStation.setText(getString(R.string.sensorNotAvail));
-			findViewById(R.id.trTemp).setVisibility(View.GONE);
-			findViewById(R.id.xyTempPlot).setVisibility(View.GONE);
+			findViewById(R.id.trTemp).setVisibility(View.INVISIBLE);
+			findViewById(R.id.xyTempPlot).setVisibility(View.INVISIBLE);
 		}
 		if (mPressSensor == null) {
 			tvCurrPressPlot.setText(getString(R.string.sensorNotAvail));
 			tvCurrPressVintage.setText(getString(R.string.sensorNotAvail));
 			tvCurrPressStation.setText(getString(R.string.sensorNotAvail));
-			findViewById(R.id.trPress).setVisibility(View.GONE);
-			findViewById(R.id.xyPressPlot).setVisibility(View.GONE);
+			findViewById(R.id.trPress).setVisibility(View.INVISIBLE);
+			findViewById(R.id.xyPressPlot).setVisibility(View.INVISIBLE);
 		}
 		if (mHumidSensor == null) {
 			tvCurrHumidPlot.setText(getString(R.string.sensorNotAvail));
 			tvCurrHumidVintage.setText(getString(R.string.sensorNotAvail));
 			tvCurrHumidStation.setText(getString(R.string.sensorNotAvail));
-			findViewById(R.id.trHumid).setVisibility(View.GONE);
-			findViewById(R.id.xyHumidPlot).setVisibility(View.GONE);
+			findViewById(R.id.trHumid).setVisibility(View.INVISIBLE);
+			findViewById(R.id.xyHumidPlot).setVisibility(View.INVISIBLE);
 		}
 
 		// calculate some sizes from dp/sp to float for AndroidPlot
-		//displayMetrics = getResources().getDisplayMetrics();
-		//textSizeSmall = displayMetrics.density*14f;
 		textSizeSmall = PixelUtils.spToPix(14);
-		//textSizeMedium = displayMetrics.density*18f;
 		textSizeMedium = PixelUtils.spToPix(18);
-		//margin10dp = displayMetrics.density*10f;
 		margin10dp = PixelUtils.dpToPix(10);
-		//margin20dp = displayMetrics.density*20f;
 		margin20dp = PixelUtils.dpToPix(20);
-		//margin25dp = displayMetrics.density*25f;
 		margin25dp = PixelUtils.dpToPix(25);
-		//margin30dp = displayMetrics.density*30f;
 		margin30dp = PixelUtils.dpToPix(30);
-		//margin40dp = displayMetrics.density*40f;
 		margin40dp = PixelUtils.dpToPix(40);
 
         appContext = this;
@@ -607,17 +581,13 @@ public class WeatherStation extends ActionBarActivity implements
 				vintageLayout.setVisibility(View.GONE);
 				stationLayout.setVisibility(View.GONE);
 				modernLayout.setVisibility(View.VISIBLE);
-				findViewById(R.id.b_infinite).setVisibility(View.VISIBLE);
-				findViewById(R.id.b_day_view).setVisibility(View.VISIBLE);
-				findViewById(R.id.b_month_view).setVisibility(View.VISIBLE);
+				findViewById(R.id.rl_toolbar).setVisibility(View.VISIBLE);
 				break;
 			case 1: // Vintage view
 				modernLayout.setVisibility(View.GONE);
 				stationLayout.setVisibility(View.GONE);
 				vintageLayout.setVisibility(View.VISIBLE);
-				findViewById(R.id.b_infinite).setVisibility(View.GONE);
-				findViewById(R.id.b_day_view).setVisibility(View.GONE);
-				findViewById(R.id.b_month_view).setVisibility(View.GONE);
+				findViewById(R.id.rl_toolbar).setVisibility(View.INVISIBLE);
 				getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.color.my_gold_brown));
 				findViewById(R.id.b_tb_up).setBackground(getResources().getDrawable(R.color.my_gold_brown));
 				if (android.os.Build.VERSION.SDK_INT >= 21) {
@@ -629,9 +599,7 @@ public class WeatherStation extends ActionBarActivity implements
 				modernLayout.setVisibility(View.GONE);
 				vintageLayout.setVisibility(View.GONE);
 				stationLayout.setVisibility(View.VISIBLE);
-				findViewById(R.id.b_infinite).setVisibility(View.GONE);
-				findViewById(R.id.b_day_view).setVisibility(View.GONE);
-				findViewById(R.id.b_month_view).setVisibility(View.GONE);
+				findViewById(R.id.rl_toolbar).setVisibility(View.INVISIBLE);
 				getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.color.my_gray_bright));
 				findViewById(R.id.b_tb_up).setBackground(getResources().getDrawable(R.color.my_gray_bright));
 				if (android.os.Build.VERSION.SDK_INT >= 21) {
@@ -746,6 +714,7 @@ public class WeatherStation extends ActionBarActivity implements
 		if (BuildConfig.DEBUG) Log.d(LOG_TAG, "OnClick id = " + v.getId());
 		final ScrollView vDrawer = (ScrollView) this.findViewById(R.id.v_drawer);
 		switch (v.getId()) {
+			// Switch main gauge view
 			case R.id.thermometer:
 				if (gvBig != gvThermo) {
 					Utils.reOrderGauge(this, R.id.tvCurrPressVintage, R.id.thermometer,
@@ -770,10 +739,12 @@ public class WeatherStation extends ActionBarActivity implements
 					gvBig = gvHygro;
 				}
 				break;
+			// Close app
 			case R.id.b_tb_up:
 				if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Finish");
 				finish();
 				break;
+			// Show continious plot view
 			case R.id.b_infinite:
 				if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Infinite view");
 				isContinuous = true;
@@ -785,10 +756,11 @@ public class WeatherStation extends ActionBarActivity implements
 				humidLevelsPlot.redraw();
 				/** Image button to jump to previous or next day */
 				ImageButton b_nav = (ImageButton) findViewById(R.id.b_next);
-				b_nav.setVisibility(View.GONE);
+				b_nav.setVisibility(View.INVISIBLE);
 				b_nav = (ImageButton) findViewById(R.id.b_last);
-				b_nav.setVisibility(View.GONE);
+				b_nav.setVisibility(View.INVISIBLE);
 				break;
+			// Show day by day plot view
 			case R.id.b_day_view:
 				if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Day view");
 				isContinuous = false;
@@ -804,6 +776,7 @@ public class WeatherStation extends ActionBarActivity implements
 					b_nav.setVisibility(View.VISIBLE);
 				}
 				break;
+			// Show daily overview plot
 			case R.id.b_month_view:
 				if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Month view");
 				isContinuous = false;
@@ -814,49 +787,52 @@ public class WeatherStation extends ActionBarActivity implements
 				pressLevelsPlot.redraw();
 				humidLevelsPlot.redraw();
 				b_nav = (ImageButton) findViewById(R.id.b_next);
-				b_nav.setVisibility(View.GONE);
+				b_nav.setVisibility(View.INVISIBLE);
 				b_nav = (ImageButton) findViewById(R.id.b_last);
-				b_nav.setVisibility(View.GONE);
+				b_nav.setVisibility(View.INVISIBLE);
 				break;
+			// Jump to next day in day by day plot view
 			case R.id.b_next:
 				if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Next day view");
-				if (dayToShow > 1) {
-					dayToShow--;
-					Utils.clearCharts();
-					Utils.initCharts(false, true, dayToShow, this);
-					tempLevelsPlot.redraw();
-					pressLevelsPlot.redraw();
-					humidLevelsPlot.redraw();
-					if (dayToShow == 1) {
-						b_nav = (ImageButton) findViewById(R.id.b_next);
-						b_nav.setVisibility(View.GONE);
+					if (dayToShow > 1) {
+						dayToShow--;
+						Utils.clearCharts();
+						Utils.initCharts(false, true, dayToShow, this);
+						tempLevelsPlot.redraw();
+						pressLevelsPlot.redraw();
+						humidLevelsPlot.redraw();
+						if (dayToShow == 1) {
+							b_nav = (ImageButton) findViewById(R.id.b_next);
+							b_nav.setVisibility(View.INVISIBLE);
+						}
+						if (numOfDayRecords != 1) {
+							b_nav = (ImageButton) findViewById(R.id.b_last);
+							b_nav.setVisibility(View.VISIBLE);
+						}
 					}
-					if (numOfDayRecords != 1) {
-						b_nav = (ImageButton) findViewById(R.id.b_last);
-						b_nav.setVisibility(View.VISIBLE);
-					}
-				}
 				break;
+			// Jump to previous day in day by day plot view
 			case R.id.b_last:
 				if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Previous day view");
-				//numOfDayRecords = DataHolder.sizeOfDayEntry();
-				if (dayToShow < numOfDayRecords) {
-					dayToShow++;
-					Utils.clearCharts();
-					Utils.initCharts(false, true, dayToShow, this);
-					tempLevelsPlot.redraw();
-					pressLevelsPlot.redraw();
-					humidLevelsPlot.redraw();
-					if (dayToShow != 1) {
-						b_nav = (ImageButton) findViewById(R.id.b_next);
-						b_nav.setVisibility(View.VISIBLE);
+					//numOfDayRecords = DataHolder.sizeOfDayEntry();
+					if (dayToShow < numOfDayRecords) {
+						dayToShow++;
+						Utils.clearCharts();
+						Utils.initCharts(false, true, dayToShow, this);
+						tempLevelsPlot.redraw();
+						pressLevelsPlot.redraw();
+						humidLevelsPlot.redraw();
+						if (dayToShow != 1) {
+							b_nav = (ImageButton) findViewById(R.id.b_next);
+							b_nav.setVisibility(View.VISIBLE);
+						}
+						if (dayToShow == numOfDayRecords) {
+							b_nav = (ImageButton) findViewById(R.id.b_last);
+							b_nav.setVisibility(View.INVISIBLE);
+						}
 					}
-					if (dayToShow == numOfDayRecords) {
-						b_nav = (ImageButton) findViewById(R.id.b_last);
-						b_nav.setVisibility(View.GONE);
-					}
-				}
 				break;
+			// Navigation drawer activities
 			case R.id.sb_export:
 				if (!WSDatabaseHelper.exportDatabase()) {
 					Utils.myAlert(this, getString(R.string.errorExportTitle), getString(R.string.errorExport));

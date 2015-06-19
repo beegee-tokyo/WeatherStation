@@ -138,8 +138,6 @@ class WSDatabaseHelper extends SQLiteOpenHelper {
 	 *            Cursor with all database entries matching with dayNumber
 	 */
 	public Cursor getDay(SQLiteDatabase db, int dayNumber) {
-		/** Access to the database */
-		//db = this.getReadableDatabase();
 		/** Cursor holding the records of a day */
 		return db.query(TABLE_NAME,
 				new String[]{"ts", "ds", "dn", "t", "p", "h",
@@ -159,8 +157,6 @@ class WSDatabaseHelper extends SQLiteOpenHelper {
 	 *            Cursor with all database entries matching with dayNumber
 	 */
 	private Cursor getAll(SQLiteDatabase db) {
-		/** Access to the database */
-		//db = this.getReadableDatabase();
 		/** Cursor holding all entries of the database */
 		Cursor allRows = db.rawQuery("select * from " + TABLE_NAME, null);
 		if (BuildConfig.DEBUG) Log.d("WeatherStation-DB", "Read all Rows Cursor = "+allRows);
@@ -177,9 +173,6 @@ class WSDatabaseHelper extends SQLiteOpenHelper {
 	public void shiftDays(SQLiteDatabase db) {
 		deleteDay(db);
 
-		/** Access to the database */
-		//db = this.getWritableDatabase();
-
 		for (int dayNumber=30; dayNumber>=1; dayNumber--) {
 			/** Content value holding "dn", the value we want to change */
 			ContentValues updateData = new ContentValues();
@@ -195,8 +188,6 @@ class WSDatabaseHelper extends SQLiteOpenHelper {
 	 *
      */
 	private void deleteDay(SQLiteDatabase db) {
-		/** Access to the database */
-		//db = this.getWritableDatabase();
 		db.delete(TABLE_NAME, "dn=" + 31, null);
 	}
 
@@ -207,8 +198,6 @@ class WSDatabaseHelper extends SQLiteOpenHelper {
 	 *            pointer to database
 	 */
 	public void cleanDB(SQLiteDatabase db) {
-		/** Access to the database */
-		//db = this.getWritableDatabase();
 		db.execSQL("DELETE FROM " + TABLE_NAME); //delete all rows in a table
 	}
 

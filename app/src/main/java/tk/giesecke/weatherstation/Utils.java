@@ -12,6 +12,7 @@ import android.hardware.Sensor;
 import android.os.Build;
 import android.os.StrictMode;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -46,6 +47,9 @@ import java.util.List;
  * @version 1.0 May 31, 2015.
  */
 public class Utils extends WeatherStation implements AdapterView.OnItemClickListener {
+
+	/** Pointer to list view with the files */
+	public static ListView lvFileList;
 
 	/**
 	 * Convert temperature to user selected unit
@@ -1142,13 +1146,21 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 					});
 
 			/** Pointer to list view with the files */
-			ListView lvFileList = (ListView) fileListView.findViewById(R.id.lv_FileList);
+			lvFileList = (ListView) fileListView.findViewById(R.id.lv_FileList);
 			final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
 					appContext,
-					android.R.layout.simple_list_item_1,
+					android.R.layout.simple_list_item_single_choice,
 					files );
 
 			lvFileList.setAdapter(arrayAdapter);
+			lvFileList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+				                               int pos, long id) {
+					restoreFilePath = path + files.get(pos);
+					deleteBackupFile();
+					return true;
+				}
+			});
 
 			fileList.show();
 			return lvFileList;
@@ -1497,15 +1509,57 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 		fTrend = ((numArray.size()*xyArraySum)-(xArraySum*yArraySum)) /
 				((numArray.size()*(float)x2ArraySum)-(xArraySum*xArraySum));
 
-/*		for (int i=0; i<numArray.size()-1; i++) {
-			fTrend = fTrend + ((numArray.get(i+1)-numArray.get(i))/numArray.get(i));
-		}
-		fTrend = fTrend/numArray.size();
-*/		if (fTrend > 0f) {
+		if (fTrend > 0f) {
 			return appContext.getString(R.string.upTendency);
 		} else if (fTrend < 0f) {
 			return appContext.getString(R.string.downTendency);
 		}
 		return appContext.getString(R.string.straightTendency);
+	}
+
+	/**
+	 * Delete backup file from SD card
+	 */
+	public static void deleteBackupFile() {
+
+		/** Builder for alert dialog */
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				appContext);
+
+		// set title
+		alertDialogBuilder.setTitle(appContext.getResources().getString(R.string.delFileTitle));
+
+		// set dialog message
+		alertDialogBuilder
+				.setMessage(appContext.getResources().getString(R.string.delFileText,restoreFilePath))
+				.setCancelable(false)
+				.setPositiveButton(appContext.getResources().getString(android.R.string.ok),
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								/** Pointer to directory/file */
+								File file = new File(restoreFilePath);
+								if (!file.delete()) {
+									// Big problem as we cannot delete the old file
+									if (BuildConfig.DEBUG) Log.d(WeatherStation.LOG_TAG, "Cannot delete existing file");
+									return;
+								}
+								files.remove(restoreFilePath);
+								lvFileList.deferNotifyDataSetChanged();
+								dialog.cancel();
+							}
+						})
+				.setNegativeButton(appContext.getResources().getString(android.R.string.cancel),
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
+
+		// create alert dialog
+		/** Alert dialog to be shown */
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
 	}
 }

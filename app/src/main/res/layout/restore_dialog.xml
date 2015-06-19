@@ -16,5 +16,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/lv_FileList"
         android:layout_gravity="center_horizontal"
-        android:choiceMode="singleChoice" />
+        android:choiceMode="singleChoice"
+        android:longClickable="true"
+        android:listSelector="@android:drawable/list_selector_background"/>
+
 </LinearLayout>

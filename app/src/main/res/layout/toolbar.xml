@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-                                          android:id="@+id/toolbar"
-                                          style="?myToolBar"
-                                          android:layout_width="match_parent"
-                                          android:layout_height="30dp">
+                                   android:id="@+id/toolbar"
+                                   style="?myToolBar"
+                                   android:layout_width="match_parent"
+                                   android:layout_height="30dp">
+
+    <ImageButton
+        android:id="@+id/b_tb_up"
+        style="?myToolBar"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:clickable="true"
+        android:src="@drawable/ic_action_back"
+        android:contentDescription="@string/app_name"
+        android:onClick="onClick"
+        android:background="@android:color/transparent"
+        android:scaleType="centerCrop"/>
 
     <RelativeLayout
+        android:id="@+id/rl_toolbar"
         style="?myToolBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:columnCount="6">
-
-        <ImageButton
-            android:id="@+id/b_tb_up"
-            style="?myToolBar"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:clickable="true"
-            android:src="@drawable/ic_action_back"
-            android:contentDescription="@string/app_name"
-            android:onClick="onClick"
-            android:background="@android:color/transparent"
-            android:scaleType="centerCrop"/>
 
         <ImageButton
             android:id="@+id/b_last"
@@ -38,7 +39,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:visibility="gone"
+            android:visibility="invisible"
             android:scaleType="centerCrop"/>
 
         <ImageButton
@@ -56,7 +57,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:visibility="gone"
+            android:visibility="invisible"
             android:scaleType="centerCrop"/>
 
         <ImageButton

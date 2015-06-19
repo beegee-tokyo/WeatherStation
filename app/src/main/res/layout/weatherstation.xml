@@ -20,7 +20,8 @@
 
         <!-- the lollipop style toolbar -->
         <include
-            layout="@layout/toolbar"/>
+            layout="@layout/toolbar"
+            style="?myToolBar"/>
 
         <!-- the plot style view -->
         <include

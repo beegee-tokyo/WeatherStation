@@ -87,6 +87,8 @@
     <string name="sensorPower">Power:</string>
     <string name="sensorVersion">Version:</string>
     <string name="sensorRate">Update time:</string>
+    <string name="delFileTitle">Delete backup file</string>
+    <string name="delFileText">Do you want to delete %1$s?</string>
 
     <!-- Google adMob -->
     <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
