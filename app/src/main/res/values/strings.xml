@@ -91,7 +91,7 @@
     <string name="delFileText">Do you want to delete %1$s?</string>
 
     <!-- Google adMob -->
-    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-7770590286348676/1437005342</string>
 
     <!-- Widget configuration -->
     <string name="tvWidgetMaxText">320</string>
