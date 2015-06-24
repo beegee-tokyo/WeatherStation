@@ -44,12 +44,13 @@ import java.util.List;
  * unit conversion methods
  *
  * @author Bernd Giesecke
- * @version 1.0 May 31, 2015.
+ * @version 1.1 June 19th, 2015.
  */
+@SuppressWarnings("deprecation")
 public class Utils extends WeatherStation implements AdapterView.OnItemClickListener {
 
 	/** Pointer to list view with the files */
-	public static ListView lvFileList;
+	private static ListView lvFileList;
 
 	/**
 	 * Convert temperature to user selected unit
@@ -1520,7 +1521,7 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 	/**
 	 * Delete backup file from SD card
 	 */
-	public static void deleteBackupFile() {
+	private static void deleteBackupFile() {
 
 		/** Builder for alert dialog */
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(

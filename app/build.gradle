@@ -7,8 +7,8 @@ android {
 		applicationId "tk.giesecke.weatherstation"
 		minSdkVersion 16
 		targetSdkVersion 21
-		versionName '1.1'
-		versionCode 11
+		versionName '1.2'
+		versionCode 12
 	}
 	buildTypes {
 		release {

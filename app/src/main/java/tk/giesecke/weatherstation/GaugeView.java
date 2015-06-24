@@ -35,8 +35,10 @@ import android.view.View;
  * <p/>
  * Broadcast receiver for boot completed
  *
+ * @see <a href="https://github.com/CodeAndMagic/GaugeView">
+ * CodeAndMagic/GaugeView</a>
  * @author Evelina Vrabie -- patched by Bernd Giesecke
- * @version 1.0 May 31, 2015.
+ * @version 1.1 June 19th, 2015.
  */
 public class GaugeView extends View {
 
@@ -542,7 +544,7 @@ public class GaugeView extends View {
 	 * Set default needle right side paint
 	 *
 	 * @return paint
-	 *          Paint for meedle right side
+	 *          Paint for needle right side
 	 */
 	private Paint getDefaultNeedleRightPaint() {
 		/** Paint for needle right side */
@@ -617,7 +619,7 @@ public class GaugeView extends View {
 
 	@Override
 	protected Parcelable onSaveInstanceState() {
-		/** Parcable containing state */
+		/** Parcelable containing state */
 		final Parcelable superState = super.onSaveInstanceState();
 
 		/** Bundle containing saved state */
@@ -810,7 +812,7 @@ public class GaugeView extends View {
 	}
 
 	/**
-	 * Calculate curren value for needle movement and acceleration
+	 * Calculate current value for needle movement and acceleration
 	 */
 	private void computeCurrentValue() {
 		// Logger.log.warn(String.format("velocity=%f, acceleration=%f", mNeedleVelocity,

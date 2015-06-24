@@ -19,7 +19,7 @@ import android.widget.Spinner;
  * The configuration screen for the {@link WidgetValues WidgetValues} AppWidget.
  *
  * @author Bernd Giesecke
- * @version 1.0 May 31, 2015.
+ * @version 1.1 June 19th, 2015.
  */
 public class WidgetValuesConfigure extends Activity {
 

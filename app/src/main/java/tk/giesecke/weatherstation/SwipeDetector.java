@@ -8,14 +8,16 @@ import android.view.View;
  * SwipeDetector
  * handles swipes on the screen
  *
- * @author Bernd Giesecke
- * @version 1.0 May 31, 2015.
+ * @see <a href="http://stackoverflow.com/a/25051413/4407948">
+ * How to detect the swipe left or Right in Android?</a>
+ * @author Gal ROM - http://stackoverflow.com/a/25051413/4407948
+ * @version 1.1 June 19th, 2015.
  */
 public class SwipeDetector implements View.OnTouchListener{
 
-	/** Float containg down movement in x axis */
+	/** Float containing down movement in x axis */
 	private float downX;
-	/** Float containg down movement in y axis */
+	/** Float containing down movement in y axis */
 	private float downY;
 
 	private onSwipeEvent swipeEventListener;
@@ -89,7 +91,7 @@ public class SwipeDetector implements View.OnTouchListener{
 	 * Calculates direction and length of swipe
 	 *
 	 * @param v
-	 *          View where the touch/swipe happend
+	 *          View where the touch/swipe happened
 	 * @param event
 	 *          Motion event info
 	 * @return <code>boolean</code>
@@ -104,14 +106,14 @@ public class SwipeDetector implements View.OnTouchListener{
 				return true;
 			}
 			case MotionEvent.ACTION_UP: {
-				/** Float containg up movement in x axis */
+				/** Float containing up movement in x axis */
 				float upX = event.getX();
-				/** Float containg up movement in y axis */
+				/** Float containing up movement in y axis */
 				float upY = event.getY();
 
-				/** Float containg movement delta in x axis */
+				/** Float containing movement delta in x axis */
 				float deltaX = downX - upX;
-				/** Float containg movement delta in y axis */
+				/** Float containing movement delta in y axis */
 				float deltaY = downY - upY;
 
 				//HORIZONTAL SCROLL

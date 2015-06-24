@@ -56,13 +56,14 @@ import java.util.List;
  * main activity
  *
  * @author Bernd Giesecke
- * @version 1.0 May 31, 2015.
+ * @version 1.2 June 24th, 2015.
  */
+@SuppressWarnings("deprecation")
 public class WeatherStation extends ActionBarActivity implements
 		View.OnClickListener, SensorEventListener, AdapterView.OnItemClickListener {
 
 	/** Debug tag */
-	public static final String LOG_TAG = "WeatherStation";
+	static final String LOG_TAG = "WeatherStation";
     /** Application context */
     public static Context appContext;
 	/** Application context */
@@ -124,7 +125,7 @@ public class WeatherStation extends ActionBarActivity implements
 	/** Bright color of selected theme */
 	static int colorBright;
 	/** Color of status bar when in vintage view */
-	public static int colorStatusVintage;
+	private static int colorStatusVintage;
 	/** Color of status bar when in station view */
 	private static int colorStatusStation;
 	/** Color of toolbar background */
@@ -174,11 +175,11 @@ public class WeatherStation extends ActionBarActivity implements
 	private TextView tvTodayMinHumid;
 
 	/** Last measured temperature for tendency detection */
-	private ArrayList<Float> lastTempArr = new ArrayList<>();
+	private final ArrayList<Float> lastTempArr = new ArrayList<>();
 	/** Last measured pressure for tendency detection */
-	private ArrayList<Float> lastPressArr = new ArrayList<>();
+	private final ArrayList<Float> lastPressArr = new ArrayList<>();
 	/** Last measured humidity for tendency detection */
-	private ArrayList<Float> lastHumidArr = new ArrayList<>();
+	private final ArrayList<Float> lastHumidArr = new ArrayList<>();
 
 	/** Number of plot y values */
     private static int plotValues = 20;
@@ -741,10 +742,64 @@ public class WeatherStation extends ActionBarActivity implements
 				break;
 			// Close app
 			case R.id.b_tb_up:
-				if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Finish");
-				finish();
+				/** Layout for modern view */
+				LinearLayout plotLayout = (LinearLayout) findViewById(R.id.modern);
+				/** Layout for vintage view */
+				RelativeLayout vintageLayout = (RelativeLayout) findViewById(R.id.vintage);
+				/** Layout for station view */
+				RelativeLayout stationLayout = (RelativeLayout) findViewById(R.id.station);
+				/** Main layout view */
+				LinearLayout llMain = (LinearLayout) findViewById(R.id.ll_main);
+				switch (uiLayout) {
+					case 0:
+						findViewById(R.id.rl_toolbar).setVisibility(View.INVISIBLE);
+						plotLayout.setVisibility(View.GONE);
+						vintageLayout.setVisibility(View.VISIBLE);
+						getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.color.my_gold_brown));
+						findViewById(R.id.b_tb_up).setBackground(getResources().getDrawable(R.color.my_gold_brown));
+						if (android.os.Build.VERSION.SDK_INT >= 21) {
+							getWindow().setStatusBarColor(colorStatusVintage);
+						}
+						llMain.setBackgroundColor(colorStatusVintage);//
+						uiLayout = 1;
+						break;
+					case 1:
+						vintageLayout.setVisibility(View.GONE);
+						stationLayout.setVisibility(View.VISIBLE);
+						getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.color.my_gray_bright));
+						findViewById(R.id.b_tb_up).setBackground(getResources().getDrawable(R.color.my_gray_bright));
+						if (android.os.Build.VERSION.SDK_INT >= 21) {
+							getWindow().setStatusBarColor(colorStatusStation);
+						}
+						llMain.setBackgroundColor(colorStatusStation);
+						uiLayout = 2;
+						break;
+					case 2:
+						findViewById(R.id.rl_toolbar).setVisibility(View.VISIBLE);
+						if (plotValues == 24) {
+							/** Image button to jump to previous or next day */
+							ImageButton b_nav = (ImageButton) findViewById(R.id.b_next);
+							b_nav.setVisibility(View.VISIBLE);
+							b_nav = (ImageButton) findViewById(R.id.b_last);
+							b_nav.setVisibility(View.VISIBLE);
+						}
+						stationLayout.setVisibility(View.GONE);
+						plotLayout.setVisibility(View.VISIBLE);
+						getSupportActionBar().setBackgroundDrawable(toolBarDrawable);
+						findViewById(R.id.b_tb_up).setBackground(toolBarDrawable);
+						if (android.os.Build.VERSION.SDK_INT >= 21) {
+							getWindow().setStatusBarColor(colorDark);
+						}
+						llMain.setBackgroundColor(colorBright);
+						uiLayout = 0;
+						break;
+				}
+				mPrefs.edit().putInt("UI_Layout", uiLayout).apply();
+
+				//if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Finish");
+				//finish();
 				break;
-			// Show continious plot view
+			// Show continuous plot view
 			case R.id.b_infinite:
 				if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Infinite view");
 				isContinuous = true;

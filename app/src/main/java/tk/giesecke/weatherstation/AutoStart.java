@@ -14,7 +14,7 @@ import android.util.Log;
  * Broadcast receiver for boot completed
  *
  * @author Bernd Giesecke
- * @version 1.0 May 31, 2015.
+ * @version 1.1 June 19th, 2015.
  */
 public class AutoStart extends BroadcastReceiver {
 	/** Debug tag */
