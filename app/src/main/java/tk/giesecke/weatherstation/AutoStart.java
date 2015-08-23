@@ -55,6 +55,7 @@ public class AutoStart extends BroadcastReceiver {
 				lastSavedDay = dayEntry.getInt(2); // get day stamp of last entry
 				lastSavedDayNumber = dayEntry.getInt(3); // get daynumber of last entry
 			}
+			dayEntry.close();
 			dataBase.close();
 			wsDbHelper.close();
 

@@ -242,6 +242,9 @@ public class BGService extends Service implements SensorEventListener {
 		if (dayEntry.getCount() != 0) {
 			dayEntry.moveToLast();
 			if (dayEntry.getInt(0) == timeStamp) { // we wrote already a record for this timestamp
+				dayEntry.close();
+				dataBase.close();
+				wsDbHelper.close();
 				return true;
 			}
 		}

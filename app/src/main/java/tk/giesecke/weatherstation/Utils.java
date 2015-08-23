@@ -393,28 +393,32 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 				xValueLabel = appContext.getString(R.string.currHour);
 				/** Cursor filled with existing entries of today */
 				Cursor dayEntry = wsDbHelper.getDay(dataBase, day);
-				dayEntry.moveToFirst();
+				if (dayEntry.getCount() != 0) {
+					dayEntry.moveToFirst();
 
-				for (int i = 0; i<dayEntry.getCount(); i++) {
-					timeStamps.add(dayEntry.getInt(0));
-					dayStamps.add(dayEntry.getInt(1));
-					tempEntries.add(Utils.cToU(dayEntry.getFloat(3), tempUnit));
-					pressEntries.add(Utils.pToU(dayEntry.getFloat(4), pressUnit));
-					humidEntries.add(dayEntry.getFloat(5));
-					dayEntry.moveToNext();
+					for (int i = 0; i<dayEntry.getCount(); i++) {
+						timeStamps.add(dayEntry.getInt(0));
+						dayStamps.add(dayEntry.getInt(1));
+						tempEntries.add(Utils.cToU(dayEntry.getFloat(3), tempUnit));
+						pressEntries.add(Utils.pToU(dayEntry.getFloat(4), pressUnit));
+						humidEntries.add(dayEntry.getFloat(5));
+						dayEntry.moveToNext();
+					}
 				}
+				dayEntry.close();
 
 				numOfDayRecords = 0;
 				for (int i=1; i<32; i++) {
 					/** Cursor filled with existing entries of today */
 					dayEntry = wsDbHelper.getDay(dataBase, i);
-					dayEntry.moveToFirst();
 					if (dayEntry.getCount() == 0) {
+						dayEntry.close();
 						break;
 					}
+					dayEntry.moveToFirst();
 					numOfDayRecords++;
+					dayEntry.close();
 				}
-				dayEntry.close();
 
 			} else {
 				xValueLabel = appContext.getString(R.string.currMonth);
@@ -423,10 +427,11 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 				for (int i=1; i<32; i++) {
 					/** Cursor filled with existing entries of today */
 					Cursor dayEntry = wsDbHelper.getDay(dataBase, i);
-					dayEntry.moveToFirst();
 					if (dayEntry.getCount() == 0) {
+						dayEntry.close();
 						break;
 					}
+					dayEntry.moveToFirst();
 					numOfDayRecords++;
 					dayEntry.moveToLast();
 					timeStamps.add(dayEntry.getInt(0));
@@ -1395,8 +1400,8 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 		dataBase = wsDbHelper.getReadableDatabase();
 		/** Cursor filled with existing entries of today */
 		Cursor dayEntry = wsDbHelper.getDay(dataBase, 1);
-		dayEntry.moveToLast();
 		if (dayEntry.getCount() != 0) {
+			dayEntry.moveToLast();
 			// get min and max values of today
 			if (dayEntry.getFloat(6) >= lastTempValue ) {
 				todayMaxTemp = Utils.cToU(dayEntry.getFloat(6), tempUnit);
@@ -1436,6 +1441,7 @@ public class Utils extends WeatherStation implements AdapterView.OnItemClickList
 			todayMaxHumid = lastHumidValue;
 			todayMinHumid = lastHumidValue;
 		}
+		dayEntry.close();
 		dataBase.close();
 		wsDbHelper.close();
 	}
