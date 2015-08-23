@@ -14,7 +14,7 @@ import android.util.Log;
  * Service to update the widgets
  *
  * @author Bernd Giesecke
- * @version 1.1 June 19th, 2015.
+ * @version 1.3 August 23, 2015
  */
 public class WidgetValuesService extends IntentService implements SensorEventListener {
 

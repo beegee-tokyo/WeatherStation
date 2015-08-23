@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * database access methods
  *
  * @author Bernd Giesecke
- * @version 1.1 June 19th, 2015.
+ * @version 1.3 August 23, 2015
  */
 class WSDatabaseHelper extends SQLiteOpenHelper {
 
@@ -155,8 +155,24 @@ class WSDatabaseHelper extends SQLiteOpenHelper {
 	 *            pointer to database
 	 * @return <code>Cursor</code> dayStamp
 	 *            Cursor with all database entries matching with dayNumber
+	 *            Entry per day is
+	 *            cursor[0] = time stamp
+	 *            cursor[1] = date stamp
+	 *            cursor[2] = day number
+	 *            cursor[3] = temperature
+	 *            cursor[4] = pressure
+	 *            cursor[5] = humidity
+	 *            cursor[6] = max temperature
+	 *            cursor[7] = min temperature
+	 *            cursor[8] = average temperature
+	 *            cursor[9] = max pressure
+	 *            cursor[10] = min pressure
+	 *            cursor[11] = average pressure
+	 *            cursor[12] = max humidity
+	 *            cursor[13] = min humidity
+	 *            cursor[14] = average humidity
 	 */
-	private Cursor getAll(SQLiteDatabase db) {
+	public Cursor getAll(SQLiteDatabase db) {
 		/** Cursor holding all entries of the database */
 		Cursor allRows = db.rawQuery("select * from " + TABLE_NAME, null);
 		if (BuildConfig.DEBUG) Log.d("WeatherStation-DB", "Read all Rows Cursor = "+allRows);
@@ -182,7 +198,7 @@ class WSDatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * Deletes all entries matching with dayNumber
+	 * Deletes all entries with dayNumber 31
 	 *  @param db
 	 *            pointer to database
 	 *

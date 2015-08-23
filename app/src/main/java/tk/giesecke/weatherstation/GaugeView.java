@@ -38,7 +38,7 @@ import android.view.View;
  * @see <a href="https://github.com/CodeAndMagic/GaugeView">
  * CodeAndMagic/GaugeView</a>
  * @author Evelina Vrabie -- patched by Bernd Giesecke
- * @version 1.1 June 19th, 2015.
+ * @version 1.3 August 23, 2015
  */
 public class GaugeView extends View {
 

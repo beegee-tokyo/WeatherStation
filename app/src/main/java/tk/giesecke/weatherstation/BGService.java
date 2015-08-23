@@ -13,7 +13,6 @@ import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +23,7 @@ import java.util.List;
  * and save them into the database
  *
  * @author Bernd Giesecke
- * @version 1.1 June 19th, 2015.
+ * @version 1.3 August 23, 2015
  */
 public class BGService extends Service implements SensorEventListener {
 
@@ -138,11 +137,6 @@ public class BGService extends Service implements SensorEventListener {
 		if (BuildConfig.DEBUG) Log.d(LOG_TAG, "onSensorChanged "+event.sensor.getName()+
 				" "+event.sensor.getType());
 
-		/** Integer array for return values */
-		int[] currTime = Utils.getCurrentDate();
-		if (BuildConfig.DEBUG) Log.d(LOG_TAG, "event timestamp "+currTime[0]+"h "
-				+" on "+currTime[1]+" of month "+currTime[2]);
-
 		switch (event.sensor.getType()) {
 			case Sensor.TYPE_AMBIENT_TEMPERATURE:
 				lastTempValue = Math.round(event.values[0] * 1000.0f) / 1000.0f;
@@ -159,6 +153,11 @@ public class BGService extends Service implements SensorEventListener {
 			if (BuildConfig.DEBUG) Log.d(LOG_TAG, "writing triggered: lastTempValue = "+lastTempValue
 					+" lastPressValue = "+lastPressValue
 					+" lastHumidValue = "+lastHumidValue);
+
+			/** Integer array for return values */
+			int[] currTime = Utils.getCurrentDate();
+			if (BuildConfig.DEBUG) Log.d(LOG_TAG, "event timestamp "+currTime[0]+"h "
+					+" on "+currTime[1]+" of month "+currTime[2]);
 
 			if (currTime[0] == 0) { // it is 12am or 0h, so we shift the recorded days and then try to save the records
 				if (!isShiftDone) { // We did not yet the shift of recorded days
@@ -298,11 +297,9 @@ public class BGService extends Service implements SensorEventListener {
 	 */
 	private double calculateAverage(List<Float> marks) {
 		/** Sum of all entries in marks */
-		Float sum = 0f;
+		double sum = 0f;
 		/** Average of all entries in marks */
 		double shortAverage = 0f;
-		/** Format to shorten the float/double value to 2 digits behind decimal */
-		DecimalFormat twoDForm = new DecimalFormat("#.##");
 		if(!marks.isEmpty()) {
 			for (Float mark : marks) {
 				sum += mark;
@@ -310,6 +307,6 @@ public class BGService extends Service implements SensorEventListener {
 
 			shortAverage = sum / marks.size();
 		}
-		return Double.valueOf(twoDForm.format(shortAverage));
+		return shortAverage;
 	}
 }

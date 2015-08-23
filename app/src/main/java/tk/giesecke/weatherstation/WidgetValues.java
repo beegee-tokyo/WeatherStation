@@ -20,7 +20,7 @@ import android.widget.RemoteViews;
  * {@link WidgetValuesConfigure}
  *
  * @author Bernd Giesecke
- * @version 1.1 June 19th, 2015.
+ * @version 1.3 August 23, 2015
  */
 public class WidgetValues extends AppWidgetProvider {
 

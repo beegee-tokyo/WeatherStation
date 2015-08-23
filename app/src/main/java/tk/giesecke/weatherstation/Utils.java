@@ -44,7 +44,7 @@ import java.util.List;
  * unit conversion methods
  *
  * @author Bernd Giesecke
- * @version 1.1 June 19th, 2015.
+ * @version 1.3 August 23, 2015
  */
 @SuppressWarnings("deprecation")
 public class Utils extends WeatherStation implements AdapterView.OnItemClickListener {

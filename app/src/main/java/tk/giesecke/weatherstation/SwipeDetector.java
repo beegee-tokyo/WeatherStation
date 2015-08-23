@@ -11,7 +11,7 @@ import android.view.View;
  * @see <a href="http://stackoverflow.com/a/25051413/4407948">
  * How to detect the swipe left or Right in Android?</a>
  * @author Gal ROM - http://stackoverflow.com/a/25051413/4407948
- * @version 1.1 June 19th, 2015.
+ * @version 1.3 August 23, 2015
  */
 public class SwipeDetector implements View.OnTouchListener{
 

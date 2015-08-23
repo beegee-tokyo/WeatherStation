@@ -56,7 +56,7 @@ import java.util.List;
  * main activity
  *
  * @author Bernd Giesecke
- * @version 1.2 June 24th, 2015.
+ * @version 1.3 August 23, 2015
  */
 @SuppressWarnings("deprecation")
 public class WeatherStation extends ActionBarActivity implements
